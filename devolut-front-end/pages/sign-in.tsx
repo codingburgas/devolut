@@ -11,30 +11,50 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { getSession, signIn } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 export default function Signin() {
   const router = useRouter();
+  const toast = useToast();
+  const [signInLoading, setSignInLoading] = useState(false);
 
   const handleSignin = async (e: any) => {
     e.preventDefault();
 
-    const user = {
-      email: e.target.email.value,
-      password: e.target.password.value,
-    };
+    setSignInLoading(true);
 
-    const status = await signIn("credentials", {
-      redirect: false,
-      email: user.email,
-      password: user.password,
-      callbackUrl: "/",
-    });
+    setTimeout(async () => {
+      const user = {
+        email: e.target.email.value,
+        password: e.target.password.value,
+      };
 
-    if (status?.ok) router.push(status?.url);
+      const status = await signIn("credentials", {
+        redirect: false,
+        email: user.email,
+        password: user.password,
+        callbackUrl: "/",
+      });
+
+      if (status?.ok) {
+        toast.closeAll();
+        router.push(status?.url);
+      } else {
+        setSignInLoading(false);
+        toast({
+          title: "You have entered an invalid email or password!",
+          status: "error",
+          variant: "left-accent",
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 
   return (
@@ -64,11 +84,11 @@ export default function Signin() {
           >
             <form onSubmit={handleSignin}>
               <Stack spacing={4}>
-                <FormControl id="email">
+                <FormControl id="email" isRequired>
                   <FormLabel>Email address</FormLabel>
                   <Input type="email" />
                 </FormControl>
-                <FormControl id="password">
+                <FormControl id="password" isRequired>
                   <FormLabel>Password</FormLabel>
                   <Input type="password" />
                 </FormControl>
@@ -82,6 +102,8 @@ export default function Signin() {
                     <Link color={"blue.400"}>Forgot password?</Link>
                   </Stack> */}
                   <Button
+                    isLoading={signInLoading}
+                    loadingText="Sign in"
                     bg={"blue.400"}
                     color={"white"}
                     _hover={{

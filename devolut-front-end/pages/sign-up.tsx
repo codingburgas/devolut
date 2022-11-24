@@ -13,6 +13,7 @@ import {
   Text,
   useColorModeValue,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -23,44 +24,59 @@ import Head from "next/head";
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const toast = useToast();
+  const [signUpLoading, setSignUpLoading] = useState(false);
 
   const handleSignup = async (e: any) => {
     e.preventDefault();
 
-    const user = {
-      dTag: "dimi1004",
-      email: e.target.email.value,
-      password: e.target.password.value,
-      firstName: e.target.firstName.value,
-      middleName: e.target.middleName.value,
-      lastName: e.target.lastName.value,
-      dateOfBirth: e.target.dateOfBirth.value,
-      country: e.target.country.value,
-      address: e.target.address.value,
-      postCode: e.target.postCode.value,
-      city: e.target.city.value,
-      region: e.target.region.value,
-      phoneNumber: e.target.phoneNumber.value,
-    };
+    setSignUpLoading(true);
 
-    const res = await fetch("http://localhost:8080/user/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
+    setTimeout(async () => {
+      const user = {
+        dTag: "dimi1004",
+        email: e.target.email.value,
+        password: e.target.password.value,
+        firstName: e.target.firstName.value,
+        middleName: e.target.middleName.value,
+        lastName: e.target.lastName.value,
+        dateOfBirth: e.target.dateOfBirth.value,
+        country: e.target.country.value,
+        address: e.target.address.value,
+        postCode: e.target.postCode.value,
+        city: e.target.city.value,
+        region: e.target.region.value,
+        phoneNumber: e.target.phoneNumber.value,
+      };
 
-    const responseUser = await res.json();
-
-    if (res.ok && responseUser) {
-      const status = await signIn("credentials", {
-        redirect: false,
-        email: user.email,
-        password: user.password,
-        callbackUrl: "/",
+      const res = await fetch("http://localhost:8080/user/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
       });
 
-      if (status?.ok) router.push(status?.url);
-    }
+      if (res.ok && await res.json()) {
+        toast.closeAll();
+
+        const status = await signIn("credentials", {
+          redirect: false,
+          email: user.email,
+          password: user.password,
+          callbackUrl: "/",
+        });
+
+        if (status?.ok) router.push(status?.url);
+      } else {
+        setSignUpLoading(false);
+        toast({
+          title: "User with this email already exist!",
+          status: "error",
+          variant: "left-accent",
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 
   return (
@@ -181,6 +197,7 @@ export default function Signup() {
                 </HStack>
                 <Stack spacing={10} pt={2}>
                   <Button
+                    isLoading={signUpLoading}
                     type="submit"
                     loadingText="Sign up"
                     size="lg"

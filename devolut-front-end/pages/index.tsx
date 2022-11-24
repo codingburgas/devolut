@@ -4,7 +4,7 @@ export default function Home() {
   const { data: session } = useSession();
 
   return (
-    <></>
+    <button onClick={() => signOut()}>Sign out</button>
   );
 }
 
