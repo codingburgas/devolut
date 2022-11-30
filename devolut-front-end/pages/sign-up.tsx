@@ -55,7 +55,7 @@ export default function Signup() {
         body: JSON.stringify(user),
       });
 
-      if (res.ok && await res.json()) {
+      if (res.ok && res.status == 200 && await res.json()) {
         toast.closeAll();
 
         const status = await signIn("credentials", {
@@ -66,6 +66,15 @@ export default function Signup() {
         });
 
         if (status?.ok) router.push(status?.url);
+      } else if(res.status == 226) {
+        setSignUpLoading(false);
+        toast({
+          title: "User with this devolut tag already exist!",
+          status: "error",
+          variant: "left-accent",
+          position: "top-right",
+          isClosable: true,
+        });
       } else {
         setSignUpLoading(false);
         toast({
@@ -76,6 +85,7 @@ export default function Signup() {
           isClosable: true,
         });
       }
+      
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 

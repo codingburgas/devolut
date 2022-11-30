@@ -15,9 +15,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<User> createUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()) == null) return ResponseEntity.ok(userRepository.save(user));
+        if (userRepository.findByEmail(user.getEmail()) != null) return new ResponseEntity<>(null, HttpStatus.FOUND);
+        if (userRepository.findBydTag(user.getdTag()) != null) return new ResponseEntity<>(null, HttpStatus.IM_USED);
 
-        return new ResponseEntity<>(null, HttpStatus.FOUND);
+        return ResponseEntity.ok(userRepository.save(user));
     }
 
     @Override
