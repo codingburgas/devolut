@@ -34,7 +34,7 @@ export default function Signup() {
 
     setTimeout(async () => {
       const user = {
-        dTag: "dimi1004",
+        dTag: e.target.dTag.value,
         email: e.target.email.value,
         password: e.target.password.value,
         firstName: e.target.firstName.value,
@@ -131,6 +131,10 @@ export default function Signup() {
                 <FormControl id="email" isRequired>
                   <FormLabel>Email address</FormLabel>
                   <Input type="email" />
+                </FormControl>
+                <FormControl id="dTag" isRequired>
+                  <FormLabel>Devolut Tag</FormLabel>
+                  <Input type="text" maxLength={10} />
                 </FormControl>
                 <FormControl id="password" isRequired>
                   <FormLabel>Password</FormLabel>
