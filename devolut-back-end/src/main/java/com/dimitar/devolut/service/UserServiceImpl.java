@@ -23,12 +23,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<User> signIn(User user) {
-        if (userRepository.findByEmail(user.getEmail()) == null) {
+        if (userRepository.findByEmail(user.getEmail()) == null && userRepository.findBydTag(user.getEmail()) == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
-        if (userRepository.findByEmail(user.getEmail()).getPassword().equals(user.getPassword())) {
+        if (userRepository.findByEmail(user.getEmail()) != null && userRepository.findByEmail(user.getEmail()).getPassword().equals(user.getPassword())) {
             return ResponseEntity.ok(userRepository.findByEmail(user.getEmail()));
+        } else if (userRepository.findBydTag(user.getEmail()) != null && userRepository.findBydTag(user.getEmail()).getPassword().equals(user.getPassword())) {
+            return ResponseEntity.ok(userRepository.findBydTag(user.getEmail()));
         }
 
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

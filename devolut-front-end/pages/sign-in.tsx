@@ -30,7 +30,7 @@ export default function Signin() {
 
     setTimeout(async () => {
       const user = {
-        email: e.target.email.value,
+        email: e.target.dtmail.value,
         password: e.target.password.value,
       };
 
@@ -47,7 +47,7 @@ export default function Signin() {
       } else {
         setSignInLoading(false);
         toast({
-          title: "You have entered an invalid email or password!",
+          title: "You have entered an invalid email/devolut tag or password!",
           status: "error",
           variant: "left-accent",
           position: "top-right",
@@ -84,9 +84,9 @@ export default function Signin() {
           >
             <form onSubmit={handleSignin}>
               <Stack spacing={4}>
-                <FormControl id="email" isRequired>
-                  <FormLabel>Email address</FormLabel>
-                  <Input type="email" />
+                <FormControl id="dtmail" isRequired>
+                  <FormLabel>Email address / Devolut Tag</FormLabel>
+                  <Input type="text" />
                 </FormControl>
                 <FormControl id="password" isRequired>
                   <FormLabel>Password</FormLabel>
