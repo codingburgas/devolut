@@ -10,9 +10,11 @@ import {
 } from '@chakra-ui/react';
 import Header from "./header";
 import Footer from "./footer";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <>
@@ -24,7 +26,7 @@ export default function Home() {
         paddingInlineStart={{ base: '6', md: '8' }}
         paddingInlineEnd={{ base: '6', md: '8' }}
       >
-        <Header session={session} signOut={signOut} />
+        <Header session={session} router={router} signOut={signOut} />
 
         <Tabs isFitted colorScheme={'blue'}>
           <TabList>
