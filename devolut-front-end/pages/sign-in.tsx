@@ -47,7 +47,7 @@ export default function Signin() {
       } else {
         setSignInLoading(false);
         toast({
-          title: "You have entered an invalid email/devolut tag or password!",
+          title: "You have entered an invalid credentianals!",
           status: "error",
           variant: "left-accent",
           position: "top-right",
