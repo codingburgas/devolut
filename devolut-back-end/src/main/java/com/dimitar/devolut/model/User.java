@@ -27,6 +27,9 @@ public class User {
     private String region;
     private String phoneNumber;
 
+    @Column(columnDefinition = "double default '0.0'", nullable = false)
+    private double balance;
+
     public int getId() {
         return id;
     }
@@ -137,5 +140,13 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 }
