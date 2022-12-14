@@ -75,10 +75,19 @@ export default function Signup() {
           position: "top-right",
           isClosable: true,
         });
-      } else {
+      } else if (res.status == 302) {
         setSignUpLoading(false);
         toast({
           title: "User with this email already exist!",
+          status: "error",
+          variant: "left-accent",
+          position: "top-right",
+          isClosable: true,
+        });
+      } else {
+        setSignUpLoading(false);
+        toast({
+          title: "Error occured!",
           status: "error",
           variant: "left-accent",
           position: "top-right",
