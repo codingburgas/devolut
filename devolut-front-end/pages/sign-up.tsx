@@ -114,7 +114,7 @@ export default function Signup() {
             <Heading fontSize={"4xl"} textAlign={"center"}>
               Sign up
             </Heading>
-            <Text fontSize={"lg"} color={"gray.600"}>
+            <Text fontSize={"lg"} color={"gray.400"}>
               to enjoy all of our cool <Link color={"blue.400"}>features</Link>{" "}
               ✌️
             </Text>
