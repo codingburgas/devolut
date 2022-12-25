@@ -13,6 +13,7 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
+import { IncomingMessage } from "http";
 import { getSession, signIn } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -72,7 +73,7 @@ export default function Signin() {
           <Stack align={"center"}>
             <Heading fontSize={"4xl"}>Sign in to your account</Heading>
             <Text fontSize={"lg"} color={"gray.400"}>
-              to enjoy all of our cool <Link color={"blue.400"}>features</Link>{" "}
+              to enjoy all of our cool <Link color={"blue.400"}>features</Link>
               ✌️
             </Text>
           </Stack>
@@ -117,12 +118,7 @@ export default function Signin() {
               </Stack>
             </form>
             <Stack pt={6}>
-              <Text align={"center"}>
-                Don't have an account?{" "}
-                <Link href="/sign-up" color={"blue.400"}>
-                  Sign up
-                </Link>
-              </Text>
+              <Text align={"center"}>{"Don't have an account?"} <Link href="/sign-up" color={"blue.400"}>Sign up</Link></Text>
             </Stack>
           </Box>
         </Stack>
@@ -131,7 +127,7 @@ export default function Signin() {
   );
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req }: {req: IncomingMessage}) {
   const session = await getSession({ req });
 
   if (session) {

@@ -20,6 +20,7 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { IncomingMessage } from "http";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -250,7 +251,7 @@ export default function Signup() {
   );
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req }: {req: IncomingMessage}) {
   const session = await getSession({ req });
 
   if (session) {

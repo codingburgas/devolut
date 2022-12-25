@@ -11,6 +11,7 @@ import {
 import Header from "./header";
 import Footer from "./footer";
 import { useRouter } from "next/router";
+import { IncomingMessage } from "http";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -50,7 +51,7 @@ export default function Home() {
   );
 }
 
-export async function getServerSideProps({ req }){
+export async function getServerSideProps({ req }: {req: IncomingMessage}){
   const session = await getSession({ req })
 
   if(!session){
