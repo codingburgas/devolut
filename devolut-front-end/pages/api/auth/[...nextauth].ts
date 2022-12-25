@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { Session } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 export default NextAuth({
@@ -44,7 +44,7 @@ export default NextAuth({
   },
 
   callbacks: {
-    async session({ session, token }) { 
+    async session({ session, token }: { session: Session, token: any }) { 
       session.user = token.user
       return session
     },
