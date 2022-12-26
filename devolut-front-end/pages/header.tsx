@@ -12,8 +12,10 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { AtSignIcon } from '@chakra-ui/icons';
+import { Session } from 'next-auth';
+import { NextRouter } from 'next/router';
 
-const Header = ({ session, router, signOut }) => {
+const Header = ({ session, router, signOut }: {session: Session | null, router: NextRouter | null, signOut: any}) => {
   const AccountIcon = () => (
     <Icon
       viewBox="0 0 24 24"
@@ -56,7 +58,7 @@ const Header = ({ session, router, signOut }) => {
           </Avatar>
         </MenuButton>
         <MenuList>
-            <MenuItem icon={<AccountIcon/>} iconSpacing={'1'} onClick={() => router.push('/account')} fontWeight={'500'}>Account</MenuItem>
+            <MenuItem icon={<AccountIcon/>} iconSpacing={'1'} onClick={() => router?.push('/account')} fontWeight={'500'}>Account</MenuItem>
             <MenuItem icon={<AtSignIcon fontSize={'lg'} display={'block'}/>} command={"Logout"} iconSpacing={'1'} onClick={() => signOut()} fontWeight={'500'}>{session?.user.dTag}</MenuItem>
         </MenuList>
       </Menu>
