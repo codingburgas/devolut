@@ -12,6 +12,7 @@ import Header from "./header";
 import Footer from "./footer";
 import { useRouter } from "next/router";
 import { IncomingMessage } from "http";
+import Dashboard from "./dashboard";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -37,7 +38,7 @@ export default function Home() {
             <Tab fontWeight={'semibold'}>Vaults</Tab>
           </TabList>
           <TabPanels>
-            <TabPanel></TabPanel>
+            <TabPanel><Dashboard session={session}/></TabPanel>
             <TabPanel></TabPanel>
             <TabPanel></TabPanel>
             <TabPanel></TabPanel>
