@@ -32,10 +32,10 @@ export default function Home() {
 
         <Tabs isFitted colorScheme={'blue'}>
           <TabList>
-            <Tab fontWeight={'semibold'}>Dashboard</Tab>
-            <Tab fontWeight={'semibold'}>Cards</Tab>
-            <Tab fontWeight={'semibold'}>Crypto</Tab>
-            <Tab fontWeight={'semibold'}>Vaults</Tab>
+            <Tab fontWeight={'semibold'}>Табло</Tab>
+            <Tab fontWeight={'semibold'}>Карти</Tab>
+            <Tab fontWeight={'semibold'}>Криптовалути</Tab>
+            <Tab fontWeight={'semibold'}>Сейфове</Tab>
           </TabList>
           <TabPanels>
             <TabPanel><Dashboard session={session}/></TabPanel>

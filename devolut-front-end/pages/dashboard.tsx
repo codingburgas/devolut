@@ -1,6 +1,8 @@
+import { SmallAddIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
+  Button,
   ButtonGroup,
   Icon,
   IconButton,
@@ -18,10 +20,21 @@ function Balance({ n }: { n: number }) {
   const { number } = useSpring({
     number: n,
     delay: 100,
-    config: { mass: 1, tension: 20, friction: 10 }
+    config: { mass: 1, tension: 20, friction: 10 },
   });
 
-  return <div style={{display: "flex", alignItems: "center", justifyContent: "start", gap: 4}}><animated.div>{number.to((n) => n.toFixed(2))}</animated.div> лв</div>;
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "start",
+        gap: 4,
+      }}
+    >
+      <animated.div>{number.to((n) => n.toFixed(2))}</animated.div> лв
+    </div>
+  );
 }
 
 export default function Dashboard({ session }: { session: Session | null }) {
@@ -65,21 +78,42 @@ export default function Dashboard({ session }: { session: Session | null }) {
     <>
       <Skeleton isLoaded={!isLoading} borderRadius={"md"}>
         <Box
-          position={"relative"}
           display={"flex"}
-          padding={"2"}
+          flexDirection={"column"}
+          gap={"2"}
+          paddingX={"6"}
+          paddingY={"3"}
           height={"200px"}
           backgroundColor={"gray.700"}
           borderRadius={"md"}
         >
-          <Stat position={"absolute"} top={"3"} left={"6"}>
-            <StatNumber>
-              <Balance n={balance} />
-            </StatNumber>
-            <StatHelpText>Bulgarian Lev</StatHelpText>
-          </Stat>
+          <Box
+            display={"flex"}
+            justifyContent={"space-between"}
+          >
+            <Stat>
+              <StatNumber>
+                <Balance n={balance} />
+              </StatNumber>
+              <StatHelpText>Български Лев</StatHelpText>
+            </Stat>
 
-          <Avatar position={"absolute"} top={"3"} right={"6"} name='BgFlag' src='https://upload.wikimedia.org/wikipedia/commons/8/8a/Flag_of_Bulgaria.png' />
+            <Avatar
+              name="BgFlag"
+              src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Flag_of_Bulgaria.png"
+            />
+          </Box>
+
+          <Box 
+            display={"flex"}
+            justifyContent={"flex-start"}
+            justifyItems={"flex-start"}
+          >
+            <ButtonGroup>
+              <Button leftIcon={<SmallAddIcon/>} size={"md"} rounded={"xl"} h={"9"} colorScheme={"blue"}>Добави пари</Button>
+              <Button leftIcon={<ArrowForwardIcon/>} size={"md"} rounded={"xl"} h={"9"} colorScheme={"blue"}>Изпрати</Button>
+            </ButtonGroup>
+          </Box>
 
           {/* <ScaleFade initialScale={0.9} in={!isLoading}>
             <Box
