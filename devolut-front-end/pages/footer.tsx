@@ -71,7 +71,7 @@ const Footer = () => {
       </Center>
       <Center>
         <Text marginTop={'5'} fontWeight="500">
-          Copyright © 2022 by Devolut™
+          Copyright © 2023 by Devolut™
         </Text>
       </Center>
     </Box>
