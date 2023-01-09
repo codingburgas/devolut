@@ -48,7 +48,7 @@ export default function Signin() {
       } else {
         setSignInLoading(false);
         toast({
-          title: "You have entered an invalid credentianals!",
+          title: "Въвели сте неправилни данни!",
           status: "error",
           variant: "left-accent",
           position: "top-right",
@@ -71,9 +71,9 @@ export default function Signin() {
       >
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
           <Stack align={"center"}>
-            <Heading fontSize={"4xl"}>Sign in to your account</Heading>
+            <Heading fontSize={"4xl"}>Влезте в акаунта си</Heading>
             <Text fontSize={"lg"} color={"gray.400"}>
-              to enjoy all of our cool <Link color={"blue.400"}>features</Link>
+              за да се насладите на всички <Link color={"blue.400"}>възможности</Link>
               ✌️
             </Text>
           </Stack>
@@ -86,11 +86,11 @@ export default function Signin() {
             <form onSubmit={handleSignin}>
               <Stack spacing={4}>
                 <FormControl id="dtmail" isRequired>
-                  <FormLabel>Email address / Devolut Tag</FormLabel>
+                  <FormLabel>Имейал адрес / Devolut Tag</FormLabel>
                   <Input type="text" />
                 </FormControl>
                 <FormControl id="password" isRequired>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Парола</FormLabel>
                   <Input type="password" />
                 </FormControl>
                 <Stack spacing={10}>
@@ -104,7 +104,7 @@ export default function Signin() {
                   </Stack> */}
                   <Button
                     isLoading={signInLoading}
-                    loadingText="Sign in"
+                    loadingText="Вход"
                     bg={"blue.400"}
                     color={"white"}
                     _hover={{
@@ -112,13 +112,13 @@ export default function Signin() {
                     }}
                     type="submit"
                   >
-                    Sign in
+                    Вход
                   </Button>
                 </Stack>
               </Stack>
             </form>
             <Stack pt={6}>
-              <Text align={"center"}>{"Don't have an account?"} <Link href="/sign-up" color={"blue.400"}>Sign up</Link></Text>
+              <Text align={"center"}>{"Нямате акаунт?"} <Link href="/sign-up" color={"blue.400"}>Регистрирайте се</Link></Text>
             </Stack>
           </Box>
         </Stack>

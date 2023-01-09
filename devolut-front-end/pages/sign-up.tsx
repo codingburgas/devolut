@@ -113,10 +113,10 @@ export default function Signup() {
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={2} px={6}>
           <Stack align={"center"}>
             <Heading fontSize={"4xl"} textAlign={"center"}>
-              Sign up
+              Регистрирайте се
             </Heading>
             <Text fontSize={"lg"} color={"gray.400"}>
-              to enjoy all of our cool <Link color={"blue.400"}>features</Link>{" "}
+              за да се насладите на всички <Link color={"blue.400"}>възможност</Link>{" "}
               ✌️
             </Text>
           </Stack>
@@ -131,25 +131,25 @@ export default function Signup() {
                 <HStack>
                   <Box>
                     <FormControl id="firstName" isRequired>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel>Име</FormLabel>
                       <Input type="text" />
                     </FormControl>
                   </Box>
                   <Box>
                     <FormControl id="middleName" isRequired>
-                      <FormLabel>Middle Name</FormLabel>
+                      <FormLabel>Презиме</FormLabel>
                       <Input type="text" />
                     </FormControl>
                   </Box>
                   <Box>
                     <FormControl id="lastName" isRequired>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel>Фамилия</FormLabel>
                       <Input type="text" />
                     </FormControl>
                   </Box>
                 </HStack>
                 <FormControl id="email" isRequired>
-                  <FormLabel>Email address</FormLabel>
+                  <FormLabel>Имейл адрес</FormLabel>
                   <Input type="email" />
                 </FormControl>
                 <FormControl id="dTag" isRequired>
@@ -157,7 +157,7 @@ export default function Signup() {
                   <Input type="text" maxLength={10} />
                 </FormControl>
                 <FormControl id="password" isRequired>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Парола</FormLabel>
                   <InputGroup>
                     <Input type={showPassword ? "text" : "password"} />
                     <InputRightElement h={"full"}>
@@ -173,48 +173,48 @@ export default function Signup() {
                   </InputGroup>
                 </FormControl>
                 <FormControl id="dateOfBirth" isRequired>
-                  <FormLabel>Date of birth</FormLabel>
+                  <FormLabel>Дата на раждане</FormLabel>
                   <Input type="date" />
                 </FormControl>
                 <HStack>
                   <Box>
                     <FormControl id="country" isRequired>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>Държава</FormLabel>
                       <Input type="text" />
                     </FormControl>
                   </Box>
 
                   <Box>
                     <FormControl id="phoneNumber" isRequired>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>Телефонен номер</FormLabel>
                       <Input type="number" />
                     </FormControl>
                   </Box>
                 </HStack>
 
                 <FormControl id="address" isRequired>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel>Адрес</FormLabel>
                   <Input type="text" />
                 </FormControl>
 
                 <HStack>
                   <Box>
                     <FormControl id="city" isRequired>
-                      <FormLabel>City/Town</FormLabel>
+                      <FormLabel>Град/Село</FormLabel>
                       <Input type="text" />
                     </FormControl>
                   </Box>
 
                   <Box>
                     <FormControl id="region" isRequired>
-                      <FormLabel>Region</FormLabel>
+                      <FormLabel>Регион</FormLabel>
                       <Input type="text" />
                     </FormControl>
                   </Box>
 
                   <Box>
                     <FormControl id="postCode" isRequired>
-                      <FormLabel>Post Code</FormLabel>
+                      <FormLabel>Пощ. код</FormLabel>
                       <Input type="text" />
                     </FormControl>
                   </Box>
@@ -223,7 +223,7 @@ export default function Signup() {
                   <Button
                     isLoading={signUpLoading}
                     type="submit"
-                    loadingText="Sign up"
+                    loadingText="Регистриране"
                     size="lg"
                     bg={"blue.400"}
                     color={"white"}
@@ -231,14 +231,14 @@ export default function Signup() {
                       bg: "blue.500",
                     }}
                   >
-                    Sign up
+                    Регистриране
                   </Button>
                 </Stack>
                 <Stack pt={2}>
                   <Text align={"center"}>
-                    Already have an account?{" "}
+                    Вече имате регистрация?{" "}
                     <Link href="/sign-in" color={"blue.400"}>
-                      Sign in
+                      Влезте в акаунта си
                     </Link>
                   </Text>
                 </Stack>
