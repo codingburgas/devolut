@@ -1,6 +1,7 @@
 package com.dimitar.devolut.service;
 
 import com.dimitar.devolut.model.Transaction;
+import com.dimitar.devolut.model.TransactionUser;
 import com.dimitar.devolut.model.User;
 import com.dimitar.devolut.repository.TransactionRepository;
 import com.dimitar.devolut.repository.UserRepository;
@@ -21,11 +22,28 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public void createTransaction(Transaction transaction) {
-        transactionRepository.save(transaction);
+    public void createTransaction(TransactionUser transactionUser) {
+        if (transactionUser.getdTag() != null && transactionUser.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(transactionUser.getdTag(), transactionUser.getId(), transactionUser.getPassword()) == null) {
+                return;
+            }
+        } else {
+            return;
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.setReceiverId(transactionUser.getReceiverId());
+        transaction.setSenderId(transactionUser.getSenderId());
+        transaction.setAmount(transactionUser.getAmount());
 
         User receiver = userRepository.findById(transaction.getReceiverId());
         User sender = userRepository.findById(transaction.getSenderId());
+
+        if ((sender.getBalance() < transaction.getAmount()) || transaction.getAmount() <= 0) {
+            return;
+        }
+
+        transactionRepository.save(transaction);
 
         receiver.setBalance(receiver.getBalance() + transaction.getAmount());
         sender.setBalance(sender.getBalance() - transaction.getAmount());

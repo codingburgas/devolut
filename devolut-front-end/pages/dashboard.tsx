@@ -122,17 +122,20 @@ export default function Dashboard({ session }: { session: Session | null }) {
       .then((res) => res.text())
       .then((data) => {
         setTimeout(async () => {
-          const transaction = {
-            senderId: session?.user.id,
-            receiverId: Number(data),
-            amount: e.target.amount.value,
-          };
-
           const res = await fetch("http://localhost:8080/transaction/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(transaction),
+            body: JSON.stringify({
+              senderId: session?.user.id,
+              receiverId: Number(data),
+              amount: e.target.amount.value,
+              dTag: session?.user.dTag,
+              id: session?.user.id,
+              password: session?.user.password
+            }),
           });
+
+          console.log(res);
 
           if (res.ok && res.status == 200) {
             setSendMoneyModalOpen(false);
