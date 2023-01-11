@@ -35,4 +35,13 @@ public class UserServiceImpl implements UserService {
 
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
+
+    @Override
+    public ResponseEntity<String> getDTagById(int id) {
+        if (userRepository.findById(id) == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(userRepository.findById(id).getdTag());
+    }
 }

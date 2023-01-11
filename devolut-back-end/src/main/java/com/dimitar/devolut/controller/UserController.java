@@ -22,4 +22,7 @@ public class UserController {
     public ResponseEntity<User> signIn(@RequestBody User user) {
         return userService.signIn(user);
     }
+
+    @PostMapping("/getDTagById")
+    public ResponseEntity<String> getDTagById(@RequestBody int id) { return userService.getDTagById(id); }
 }

@@ -4,17 +4,33 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Flex,
   Icon,
   IconButton,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
   ScaleFade,
   Skeleton,
   Stat,
   StatHelpText,
   StatNumber,
+  Text,
 } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
 import { useSpring, animated } from "react-spring";
+import Transaction from "./transaction";
 
 function Balance({ n }: { n: number }) {
   const { number } = useSpring({
@@ -40,9 +56,12 @@ function Balance({ n }: { n: number }) {
 export default function Dashboard({ session }: { session: Session | null }) {
   const [isLoading, setIsLoading] = useState(false);
   const [balance, setBalance] = useState(0.0);
+  const [transactions, setTransactions] = useState([]);
+  const [sendMoneyModalOpen, setSendMoneyModalOpen] = useState(false);
 
   useEffect(() => {
     getBallance();
+    getTransactions();
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -66,9 +85,24 @@ export default function Dashboard({ session }: { session: Session | null }) {
     setBalance(user.balance);
   }
 
+  async function getTransactions() {
+    const res = await fetch("http://localhost:8080/transaction/user", {
+      method: "POST",
+      body: JSON.stringify(session?.user),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) return null;
+
+    const result = await res.json();
+
+    setTransactions(result);
+  }
+
   useEffect(() => {
     const interval = setInterval(async () => {
       getBallance();
+      getTransactions();
     }, 5000);
 
     return () => clearInterval(interval);
@@ -83,7 +117,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
           gap={"2"}
           paddingX={"6"}
           paddingY={"3"}
-          height={"200px"}
+          height={"auto"}
           backgroundColor={"gray.700"}
           borderRadius={"md"}
         >
@@ -111,9 +145,101 @@ export default function Dashboard({ session }: { session: Session | null }) {
           >
             <ButtonGroup>
               <Button leftIcon={<SmallAddIcon/>} size={"md"} rounded={"xl"} h={"9"} colorScheme={"blue"}>Добави пари</Button>
-              <Button leftIcon={<ArrowForwardIcon/>} size={"md"} rounded={"xl"} h={"9"} colorScheme={"blue"}>Изпрати</Button>
+              <Button onClick={() => {setSendMoneyModalOpen(true)}} leftIcon={<ArrowForwardIcon/>} size={"md"} rounded={"xl"} h={"9"} colorScheme={"blue"}>Изпрати</Button>
             </ButtonGroup>
           </Box>
+
+          <Text marginTop={"2"} marginBottom={"3"} opacity={"0.8"} fontSize={"md"}>Трансакции</Text>
+
+          <Box 
+            display={"flex"}
+            flexWrap={"wrap"}
+            flexDirection={"column"}
+            gap={"3"}
+            justifyContent={"flex-start"}
+            justifyItems={"flex-start"}
+          >
+            {transactions.map((transaction) => <Transaction transaction={transaction} session={session} />)}
+          </Box>
+
+          <Modal onClose={() => {setSendMoneyModalOpen(false)}} isOpen={sendMoneyModalOpen} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Изпрати пари</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <form>
+                  <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                    <Flex wrap={"wrap"}>
+                      <Text
+                        marginBottom={"1"}
+                        fontSize={"md"}
+                        fontWeight={"semibold"}
+                      >
+                        Получател
+                      </Text>
+                      <Input
+                        width={"100%"}
+                        height={"12"}
+                        marginBottom={"2"}
+                        minWidth={"0"}
+                        fontSize={"lg"}
+                        fontWeight={"semibold"}
+                        variant="outline"
+                        colorScheme={"blue"}
+                        name="name"
+                        placeholder="Devolut Tag"
+                        required
+                      ></Input>
+                    </Flex>
+
+                    <Flex wrap={"wrap"}>
+                      <Text
+                        marginBottom={"1"}
+                        fontSize={"md"}
+                        fontWeight={"semibold"}
+                      >
+                        Сума
+                      </Text>
+                      <NumberInput
+                        defaultValue={1}
+                        min={0.0}
+                        max={balance}
+                        precision={2}
+                        size="md"
+                        marginBottom={"2"}
+                        width={"100%"}
+                        name="weight"
+                      >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper>
+                      </NumberInput>
+                    </Flex>
+
+                    <Flex justify="space-between" wrap="nowrap" mb="3" mt="4" gap={"2"}>
+                      <Button
+                        colorScheme="green"
+                        type="submit"
+                        width={"100%"}
+                      >
+                        Изпрати
+                      </Button>
+                      <Button
+                        onClick={() => {setSendMoneyModalOpen(false)}}
+                        colorScheme="red"
+                        width={"100%"}
+                      >
+                        Откажи
+                      </Button>
+                    </Flex>
+                  </Flex>
+                </form>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
 
           {/* <ScaleFade initialScale={0.9} in={!isLoading}>
             <Box

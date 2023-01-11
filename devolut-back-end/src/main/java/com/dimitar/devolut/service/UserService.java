@@ -7,4 +7,6 @@ public interface UserService {
     public ResponseEntity<User> createUser(User user);
 
     public ResponseEntity<User> signIn(User user);
+
+    public ResponseEntity<String> getDTagById(int id);
 }
