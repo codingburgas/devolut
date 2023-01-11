@@ -58,6 +58,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
   const [balance, setBalance] = useState(0.0);
   const [transactions, setTransactions] = useState([]);
   const [sendMoneyModalOpen, setSendMoneyModalOpen] = useState(false);
+  const [sendMoneyLoading, setSendMoneyLoading] = useState(false);
 
   useEffect(() => {
     getBallance();
@@ -108,6 +109,41 @@ export default function Dashboard({ session }: { session: Session | null }) {
     return () => clearInterval(interval);
   }, []);
 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    setSendMoneyLoading(true);
+
+    await fetch("http://localhost:8080/user/getIdByDTag", {
+      method: "POST",
+      body: e.target.receiver.value,
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.text())
+      .then((data) => {
+        setTimeout(async () => {
+          const transaction = {
+            senderId: session?.user.id,
+            receiverId: Number(data),
+            amount: e.target.amount.value,
+          };
+
+          const res = await fetch("http://localhost:8080/transaction/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(transaction),
+          });
+
+          if (res.ok && res.status == 200) {
+            setSendMoneyModalOpen(false);
+            setSendMoneyLoading(false);
+            getBallance();
+            getTransactions();
+          }
+        }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
+      });
+  };
+
   return (
     <>
       <Skeleton isLoaded={!isLoading} borderRadius={"md"}>
@@ -121,10 +157,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
           backgroundColor={"gray.700"}
           borderRadius={"md"}
         >
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-          >
+          <Box display={"flex"} justifyContent={"space-between"}>
             <Stat>
               <StatNumber>
                 <Balance n={balance} />
@@ -138,20 +171,46 @@ export default function Dashboard({ session }: { session: Session | null }) {
             />
           </Box>
 
-          <Box 
+          <Box
             display={"flex"}
             justifyContent={"flex-start"}
             justifyItems={"flex-start"}
           >
             <ButtonGroup>
-              <Button leftIcon={<SmallAddIcon/>} size={"md"} rounded={"xl"} h={"9"} colorScheme={"blue"}>Добави пари</Button>
-              <Button onClick={() => {setSendMoneyModalOpen(true)}} leftIcon={<ArrowForwardIcon/>} size={"md"} rounded={"xl"} h={"9"} colorScheme={"blue"}>Изпрати</Button>
+              <Button
+                leftIcon={<SmallAddIcon />}
+                size={"md"}
+                rounded={"xl"}
+                h={"9"}
+                colorScheme={"blue"}
+              >
+                Добави пари
+              </Button>
+              <Button
+                onClick={() => {
+                  setSendMoneyModalOpen(true);
+                }}
+                leftIcon={<ArrowForwardIcon />}
+                size={"md"}
+                rounded={"xl"}
+                h={"9"}
+                colorScheme={"blue"}
+              >
+                Изпрати
+              </Button>
             </ButtonGroup>
           </Box>
 
-          <Text marginTop={"2"} marginBottom={"3"} opacity={"0.8"} fontSize={"md"}>Трансакции</Text>
+          <Text
+            marginTop={"2"}
+            marginBottom={"3"}
+            opacity={"0.8"}
+            fontSize={"md"}
+          >
+            Трансакции
+          </Text>
 
-          <Box 
+          <Box
             display={"flex"}
             flexWrap={"wrap"}
             flexDirection={"column"}
@@ -159,16 +218,24 @@ export default function Dashboard({ session }: { session: Session | null }) {
             justifyContent={"flex-start"}
             justifyItems={"flex-start"}
           >
-            {transactions.map((transaction) => <Transaction transaction={transaction} session={session} />)}
+            {transactions.map((transaction) => (
+              <Transaction transaction={transaction} session={session} />
+            ))}
           </Box>
 
-          <Modal onClose={() => {setSendMoneyModalOpen(false)}} isOpen={sendMoneyModalOpen} isCentered>
+          <Modal
+            onClose={() => {
+              setSendMoneyModalOpen(false);
+            }}
+            isOpen={sendMoneyModalOpen}
+            isCentered
+          >
             <ModalOverlay />
             <ModalContent>
               <ModalHeader>Изпрати пари</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <form>
+                <form onSubmit={handleSubmit}>
                   <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
                     <Flex wrap={"wrap"}>
                       <Text
@@ -187,9 +254,10 @@ export default function Dashboard({ session }: { session: Session | null }) {
                         fontWeight={"semibold"}
                         variant="outline"
                         colorScheme={"blue"}
-                        name="name"
+                        name="receiver"
                         placeholder="Devolut Tag"
                         required
+                        disabled={sendMoneyLoading}
                       ></Input>
                     </Flex>
 
@@ -203,13 +271,14 @@ export default function Dashboard({ session }: { session: Session | null }) {
                       </Text>
                       <NumberInput
                         defaultValue={1}
-                        min={0.0}
+                        min={0.01}
                         max={balance}
                         precision={2}
                         size="md"
                         marginBottom={"2"}
                         width={"100%"}
-                        name="weight"
+                        name="amount"
+                        isDisabled={sendMoneyLoading}
                       >
                         <NumberInputField />
                         <NumberInputStepper>
@@ -219,18 +288,28 @@ export default function Dashboard({ session }: { session: Session | null }) {
                       </NumberInput>
                     </Flex>
 
-                    <Flex justify="space-between" wrap="nowrap" mb="3" mt="4" gap={"2"}>
+                    <Flex
+                      justify="space-between"
+                      wrap="nowrap"
+                      mb="3"
+                      mt="4"
+                      gap={"2"}
+                    >
                       <Button
                         colorScheme="green"
                         type="submit"
                         width={"100%"}
+                        isLoading={sendMoneyLoading}
                       >
                         Изпрати
                       </Button>
                       <Button
-                        onClick={() => {setSendMoneyModalOpen(false)}}
+                        onClick={() => {
+                          setSendMoneyModalOpen(false);
+                        }}
                         colorScheme="red"
                         width={"100%"}
+                        isDisabled={sendMoneyLoading}
                       >
                         Откажи
                       </Button>
