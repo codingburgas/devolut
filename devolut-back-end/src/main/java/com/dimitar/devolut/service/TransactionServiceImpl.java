@@ -23,6 +23,15 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void createTransaction(Transaction transaction) {
         transactionRepository.save(transaction);
+
+        User receiver = userRepository.findById(transaction.getReceiverId());
+        User sender = userRepository.findById(transaction.getSenderId());
+
+        receiver.setBalance(receiver.getBalance() + transaction.getAmount());
+        sender.setBalance(sender.getBalance() - transaction.getAmount());
+
+        userRepository.save(receiver);
+        userRepository.save(sender);
     }
 
     @Override
