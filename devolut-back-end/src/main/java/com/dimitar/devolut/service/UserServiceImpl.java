@@ -44,4 +44,13 @@ public class UserServiceImpl implements UserService {
 
         return ResponseEntity.ok(userRepository.findById(id).getdTag());
     }
+
+    @Override
+    public ResponseEntity<Integer> getIdByDTag(String dTag) {
+        if (userRepository.findBydTag(dTag) == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(userRepository.findBydTag(dTag).getId());
+    }
 }

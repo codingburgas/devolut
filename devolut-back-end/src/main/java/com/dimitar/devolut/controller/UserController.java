@@ -25,4 +25,7 @@ public class UserController {
 
     @PostMapping("/getDTagById")
     public ResponseEntity<String> getDTagById(@RequestBody int id) { return userService.getDTagById(id); }
+
+    @PostMapping("/getIdByDTag")
+    public ResponseEntity<Integer> getIdByDTag(@RequestBody String dTag) { return userService.getIdByDTag(dTag); }
 }

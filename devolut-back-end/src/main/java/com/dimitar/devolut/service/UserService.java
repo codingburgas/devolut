@@ -9,4 +9,6 @@ public interface UserService {
     public ResponseEntity<User> signIn(User user);
 
     public ResponseEntity<String> getDTagById(int id);
+
+    public ResponseEntity<Integer> getIdByDTag(String dTag);
 }
