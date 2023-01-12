@@ -68,7 +68,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
   }, []);
 
   async function getBallance() {
-    const res = await fetch("http://localhost:8080/user/read", {
+    const res = await fetch(process.env.BACKEND_URL + "/user/read", {
       method: "POST",
       body: JSON.stringify({
         email: session?.user.dTag,
@@ -85,7 +85,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
   }
 
   async function getTransactions() {
-    const res = await fetch("http://localhost:8080/transaction/user", {
+    const res = await fetch(process.env.BACKEND_URL + "/transaction/user", {
       method: "POST",
       body: JSON.stringify(session?.user),
       headers: { "Content-Type": "application/json" },
@@ -112,7 +112,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
 
     setSendMoneyLoading(true);
 
-    await fetch("http://localhost:8080/user/getIdByDTag", {
+    await fetch(process.env.BACKEND_URL + "/user/getIdByDTag", {
       method: "POST",
       body: e.target.receiver.value,
       headers: { "Content-Type": "application/json" },
@@ -120,7 +120,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
       .then((res) => res.text())
       .then((data) => {
         setTimeout(async () => {
-          const res = await fetch("http://localhost:8080/transaction/create", {
+          const res = await fetch(process.env.BACKEND_URL + "/transaction/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

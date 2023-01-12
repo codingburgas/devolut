@@ -4,6 +4,9 @@ const nextConfig = {
   swcMinify: true,
   typescript: {
     ignoreBuildErrors: true
+  },
+  env:{
+    BACKEND_URL : process.env.BACKEND_URL,
   }
 }
 

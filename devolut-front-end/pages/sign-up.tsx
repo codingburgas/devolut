@@ -50,7 +50,7 @@ export default function Signup() {
         phoneNumber: e.target.phoneNumber.value,
       };
 
-      const res = await fetch("http://localhost:8080/user/create", {
+      const res = await fetch(process.env.BACKEND_URL + "/user/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),

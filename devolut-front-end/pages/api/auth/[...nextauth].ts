@@ -12,7 +12,7 @@ export default NextAuth({
         },
 
         async authorize(credentials, req) {
-          const res = await fetch("http://localhost:8080/user/read", {
+          const res = await fetch(process.env.BACKEND_URL + "/user/read", {
             method: 'POST',
             body: JSON.stringify(credentials),
             headers: { "Content-Type": "application/json" }

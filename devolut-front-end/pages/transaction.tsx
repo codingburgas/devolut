@@ -23,7 +23,7 @@ export default function Transaction({
   const getUserDTagById = (id) => {
     const [dTag, setDTag] = useState("");
 
-    fetch("http://localhost:8080/user/getDTagById", {
+    fetch(process.env.BACKEND_URL + "/user/getDTagById", {
       method: "POST",
       body: id,
       headers: { "Content-Type": "application/json" },
