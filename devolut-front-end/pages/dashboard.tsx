@@ -192,6 +192,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
                 rounded={"xl"}
                 h={"9"}
                 colorScheme={"blue"}
+                disabled
               >
                 Добави пари
               </Button>
