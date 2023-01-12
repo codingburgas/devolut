@@ -18,7 +18,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/create")
-    public void createTransaction(@RequestBody TransactionUser transactionUser) { transactionService.createTransaction(transactionUser); };
+    public ResponseEntity createTransaction(@RequestBody TransactionUser transactionUser) { return transactionService.createTransaction(transactionUser); };
 
     @PostMapping("/user")
     public ResponseEntity<List<Transaction>> getUserTransactions(@RequestBody User user) { return transactionService.getUserTransactions(user); };

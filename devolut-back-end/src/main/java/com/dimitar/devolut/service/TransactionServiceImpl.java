@@ -22,13 +22,13 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public void createTransaction(TransactionUser transactionUser) {
+    public ResponseEntity createTransaction(TransactionUser transactionUser) {
         if (transactionUser.getdTag() != null && transactionUser.getPassword() != null) {
             if (userRepository.findBydTagAndIdAndPassword(transactionUser.getdTag(), transactionUser.getId(), transactionUser.getPassword()) == null) {
-                return;
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
         } else {
-            return;
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
         Transaction transaction = new Transaction();
@@ -39,8 +39,8 @@ public class TransactionServiceImpl implements TransactionService {
         User receiver = userRepository.findById(transaction.getReceiverId());
         User sender = userRepository.findById(transaction.getSenderId());
 
-        if ((sender.getBalance() < transaction.getAmount()) || transaction.getAmount() <= 0) {
-            return;
+        if ((sender.getBalance() < transaction.getAmount()) || transaction.getAmount() <= 0 || receiver == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
         transactionRepository.save(transaction);
@@ -50,6 +50,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         userRepository.save(receiver);
         userRepository.save(sender);
+
+        return ResponseEntity.ok(null);
     }
 
     @Override

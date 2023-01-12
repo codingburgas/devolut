@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface TransactionService {
-    public void createTransaction(TransactionUser transactionUser);
+    public ResponseEntity createTransaction(TransactionUser transactionUser);
 
     public ResponseEntity<List<Transaction>> getUserTransactions(User user);
 }
