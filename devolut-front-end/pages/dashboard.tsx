@@ -5,14 +5,11 @@ import {
   Button,
   ButtonGroup,
   Flex,
-  Icon,
-  IconButton,
   Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   NumberDecrementStepper,
@@ -20,7 +17,6 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  ScaleFade,
   Skeleton,
   Stat,
   StatHelpText,
@@ -332,37 +328,6 @@ export default function Dashboard({ session }: { session: Session | null }) {
               </ModalBody>
             </ModalContent>
           </Modal>
-
-          {/* <ScaleFade initialScale={0.9} in={!isLoading}>
-            <Box
-              background={"blackAlpha.700"}
-              padding={"2"}
-              width={"fit-content"}
-              borderRadius={"md"}
-            >
-              <ButtonGroup display={"inline-flex"}>
-                <IconButton
-                  colorScheme={"red"}
-                  fontSize={"lg"}
-                  minWidth={"12"}
-                  height={"12"}
-                  disabled={true}
-                  aria-label="Bug Report"
-                  icon={<BugIcon />}
-                ></IconButton>
-                <Button
-                  leftIcon={<DownloadIcon />}
-                  colorScheme={"green"}
-                  paddingInline={"6"}
-                  fontSize={"lg"}
-                  minWidth={"12"}
-                  height={"12"}
-                >
-                  Download
-                </Button>
-              </ButtonGroup>
-            </Box>
-          </ScaleFade> */}
         </Box>
       </Skeleton>
     </>
