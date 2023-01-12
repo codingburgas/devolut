@@ -26,6 +26,7 @@ import {
   StatHelpText,
   StatNumber,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
@@ -59,6 +60,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
   const [transactions, setTransactions] = useState([]);
   const [sendMoneyModalOpen, setSendMoneyModalOpen] = useState(false);
   const [sendMoneyLoading, setSendMoneyLoading] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     getBallance();
@@ -135,13 +137,21 @@ export default function Dashboard({ session }: { session: Session | null }) {
             }),
           });
 
-          console.log(res);
-
           if (res.ok && res.status == 200) {
             setSendMoneyModalOpen(false);
             setSendMoneyLoading(false);
             getBallance();
             getTransactions();
+          } else if (res.status == 404) {
+            setSendMoneyModalOpen(false);
+            setSendMoneyLoading(false);
+            toast({
+              title: "Потребител с такъв Devolut Tag не съществува!",
+              status: "error",
+              variant: "left-accent",
+              position: "bottom-right",
+              isClosable: true,
+            });
           }
         }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
       });
