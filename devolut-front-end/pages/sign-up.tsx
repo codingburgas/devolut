@@ -70,7 +70,7 @@ export default function Signup() {
       } else if(res.status == 226) {
         setSignUpLoading(false);
         toast({
-          title: "User with this devolut tag already exist!",
+          title: "Потребител с такъв Devolut Tag вече съществута!",
           status: "error",
           variant: "left-accent",
           position: "top-right",
@@ -79,7 +79,7 @@ export default function Signup() {
       } else if (res.status == 302) {
         setSignUpLoading(false);
         toast({
-          title: "User with this email already exist!",
+          title: "Потребител с такъв имейл адрес вече съществува!",
           status: "error",
           variant: "left-accent",
           position: "top-right",
@@ -88,7 +88,7 @@ export default function Signup() {
       } else {
         setSignUpLoading(false);
         toast({
-          title: "Error occured!",
+          title: "Нещо се обърка!",
           status: "error",
           variant: "left-accent",
           position: "top-right",
