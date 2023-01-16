@@ -3,6 +3,10 @@ import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 
 const theme = extendTheme({
+  config: {
+    useSystemColorMode: false,
+    initialColorMode: "dark",
+  },
   colors: {
     gray: {
       700: "#222",
