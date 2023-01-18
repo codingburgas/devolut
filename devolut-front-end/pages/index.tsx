@@ -8,11 +8,11 @@ import {
   TabPanel,
   ScaleFade,
 } from '@chakra-ui/react';
-import Header from "./header";
-import Footer from "./footer";
+import Header from "../components/header";
+import Footer from "../components/footer";
 import { useRouter } from "next/router";
 import { IncomingMessage } from "http";
-import Dashboard from "./dashboard";
+import Dashboard from "../components/dashboard";
 
 export default function Home() {
   const { data: session } = useSession();
