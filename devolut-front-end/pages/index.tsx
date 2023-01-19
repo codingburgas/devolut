@@ -13,6 +13,7 @@ import Footer from "../components/footer";
 import { useRouter } from "next/router";
 import { IncomingMessage } from "http";
 import Dashboard from "../components/dashboard";
+import Head from "next/head";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -20,6 +21,10 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>Devolut</title>
+      </Head>
+
       <ScaleFade initialScale={0.9} in={true}>
       <Box
         width={'full'}

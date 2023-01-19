@@ -7,6 +7,7 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 import { useRouter } from "next/router";
 import { IncomingMessage } from "http";
+import Head from "next/head";
 
 export default function Account() {
   const { data: session } = useSession();
@@ -14,6 +15,10 @@ export default function Account() {
 
   return (
     <>
+      <Head>
+        <title>Devolut • Account</title>
+      </Head>
+      
       <ScaleFade initialScale={0.9} in={true}>
       <Box
         width={'full'}
