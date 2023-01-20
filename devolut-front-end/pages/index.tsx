@@ -38,9 +38,9 @@ export default function Home() {
         <Tabs isFitted colorScheme={'blue'}>
           <TabList>
             <Tab fontWeight={'semibold'}>Табло</Tab>
-            <Tab fontWeight={'semibold'}>Карти</Tab>
-            <Tab fontWeight={'semibold'}>Криптовалути</Tab>
-            <Tab fontWeight={'semibold'}>Сейфове</Tab>
+            <Tab isDisabled fontWeight={'semibold'}>Карти</Tab>
+            <Tab isDisabled fontWeight={'semibold'}>Криптовалути</Tab>
+            <Tab isDisabled fontWeight={'semibold'}>Сейфове</Tab>
           </TabList>
           <TabPanels>
             <TabPanel><Dashboard session={session}/></TabPanel>
