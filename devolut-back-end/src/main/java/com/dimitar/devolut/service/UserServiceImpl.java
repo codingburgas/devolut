@@ -37,15 +37,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<String> getDTagById(int id) {
-        if (userRepository.findById(id) == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        return ResponseEntity.ok(userRepository.findById(id).getdTag());
-    }
-
-    @Override
     public ResponseEntity<Integer> getIdByDTag(String dTag) {
         if (userRepository.findBydTag(dTag) == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

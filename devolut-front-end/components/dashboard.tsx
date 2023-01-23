@@ -55,6 +55,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
   const [balance, setBalance] = useState(0.0);
   const [transactions, setTransactions] = useState([]);
   const [sendMoneyModalOpen, setSendMoneyModalOpen] = useState(false);
+  const [addMoneyModalOpen, setAddMoneyModalOpen] = useState(false);
   const [sendMoneyLoading, setSendMoneyLoading] = useState(false);
   const toast = useToast();
 
@@ -187,12 +188,14 @@ export default function Dashboard({ session }: { session: Session | null }) {
           >
             <ButtonGroup>
               <Button
+                onClick={() => {
+                  setAddMoneyModalOpen(true);
+                }}
                 leftIcon={<SmallAddIcon />}
                 size={"md"}
                 rounded={"xl"}
                 h={"9"}
                 colorScheme={"blue"}
-                disabled
               >
                 Добави пари
               </Button>
@@ -232,6 +235,103 @@ export default function Dashboard({ session }: { session: Session | null }) {
               <Transaction transaction={transaction} session={session} />
             ))}
           </Box>
+
+          <Modal
+            onClose={() => {
+              setAddMoneyModalOpen(false);
+            }}
+            isOpen={addMoneyModalOpen}
+            isCentered
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Добави пари</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <form onSubmit={handleSubmit}>
+                  <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                    <Flex wrap={"wrap"}>
+                      <Text
+                        marginBottom={"1"}
+                        fontSize={"md"}
+                        fontWeight={"semibold"}
+                      >
+                        Номер на карта
+                      </Text>
+                      <Input
+                        width={"100%"}
+                        height={"12"}
+                        marginBottom={"2"}
+                        minWidth={"0"}
+                        fontSize={"lg"}
+                        fontWeight={"semibold"}
+                        variant="outline"
+                        colorScheme={"blue"}
+                        name="receiver"
+                        placeholder="Devolut Tag"
+                        required
+                        disabled={sendMoneyLoading}
+                      ></Input>
+                    </Flex>
+
+                    <Flex wrap={"wrap"}>
+                      <Text
+                        marginBottom={"1"}
+                        fontSize={"md"}
+                        fontWeight={"semibold"}
+                      >
+                        Сума
+                      </Text>
+                      <NumberInput
+                        defaultValue={1}
+                        min={0.01}
+                        max={balance}
+                        precision={2}
+                        size="md"
+                        marginBottom={"2"}
+                        width={"100%"}
+                        name="amount"
+                        isDisabled={sendMoneyLoading}
+                      >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper>
+                      </NumberInput>
+                    </Flex>
+
+                    <Flex
+                      justify="space-between"
+                      wrap="nowrap"
+                      mb="3"
+                      mt="4"
+                      gap={"2"}
+                    >
+                      <Button
+                        colorScheme="green"
+                        type="submit"
+                        width={"100%"}
+                        isLoading={sendMoneyLoading}
+                      >
+                        Изпрати
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setSendMoneyModalOpen(false);
+                        }}
+                        colorScheme="red"
+                        width={"100%"}
+                        isDisabled={sendMoneyLoading}
+                      >
+                        Откажи
+                      </Button>
+                    </Flex>
+                  </Flex>
+                </form>
+              </ModalBody>
+             </ModalContent>
+            </Modal>
 
           <Modal
             onClose={() => {

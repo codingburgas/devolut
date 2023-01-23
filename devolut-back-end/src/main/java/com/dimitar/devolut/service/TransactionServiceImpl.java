@@ -2,6 +2,7 @@ package com.dimitar.devolut.service;
 
 import com.dimitar.devolut.model.Transaction;
 import com.dimitar.devolut.model.TransactionUser;
+import com.dimitar.devolut.model.TransactionView;
 import com.dimitar.devolut.model.User;
 import com.dimitar.devolut.repository.TransactionRepository;
 import com.dimitar.devolut.repository.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public ResponseEntity<List<Transaction>> getUserTransactions(User user) {
+    public ResponseEntity<List<TransactionView>> getUserTransactions(User user) {
         if (user.getdTag() != null && user.getPassword() != null) {
             if (userRepository.findBydTagAndIdAndPassword(user.getdTag(), user.getId(), user.getPassword()) == null) {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -64,8 +66,18 @@ public class TransactionServiceImpl implements TransactionService {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
-        return ResponseEntity.ok(transactionRepository.findAllBySenderIdOrReceiverId(user.getId(), user.getId()));
+        List<TransactionView> transactionViews = new ArrayList<>();
+
+        transactionRepository.findAllBySenderIdOrReceiverId(user.getId(), user.getId()).forEach((transaction -> {
+            TransactionView transactionView = new TransactionView();
+            transactionView.setSenderDTag(userRepository.findById(transaction.getSenderId()).getdTag());
+            transactionView.setReceiverDTag(userRepository.findById(transaction.getReceiverId()).getdTag());
+            transactionView.setAmount(transaction.getAmount());
+            transactionView.setCreated_at(transaction.getCreated_at());
+
+            transactionViews.add(transactionView);
+        }));
+
+        return ResponseEntity.ok(transactionViews);
     }
-
-
 }

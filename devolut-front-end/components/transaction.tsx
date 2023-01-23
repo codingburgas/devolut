@@ -1,6 +1,5 @@
 import { Avatar, Flex, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
-import { useState } from "react";
 
 function formatDate(string) {
   var options = {
@@ -20,22 +19,6 @@ export default function Transaction({
   transaction: any;
   session: Session;
 }) {
-  const getUserDTagById = (id) => {
-    const [dTag, setDTag] = useState("");
-
-    fetch(process.env.BACKEND_URL + "/user/getDTagById", {
-      method: "POST",
-      body: id,
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.text())
-      .then((data) => {
-        setDTag(data);
-      });
-
-    return dTag;
-  };
-
   return (
     <>
       <Flex
@@ -45,18 +28,18 @@ export default function Transaction({
         justifyContent={"space-between"}
       >
         <Flex alignItems={"center"} gap={"3"}>
-            {transaction.senderId == session.user.id ? (
-                <Avatar name={getUserDTagById(transaction.receiverId)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+            {transaction.senderDTag == session.user.dTag ? (
+                <Avatar name={(transaction.receiverDTag)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
             ) : (
-                <Avatar name={getUserDTagById(transaction.senderId)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+                <Avatar name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
             )}
 
           <Flex direction={"column"}>
             <Text>
-              {transaction.senderId == session.user.id ? (
-                <>До {getUserDTagById(transaction.receiverId)}</>
+              {transaction.senderDTag == session.user.dTag ? (
+                <>До {transaction.receiverDTag}</>
               ) : (
-                <>От {getUserDTagById(transaction.senderId)}</>
+                <>От {transaction.senderDTag}</>
               )}
             </Text>
 
@@ -67,7 +50,7 @@ export default function Transaction({
         </Flex>
 
         <Text>
-          {transaction.senderId == session.user.id ? (
+          {transaction.senderDTag == session.user.dTag ? (
             <>-{transaction.amount} лв</>
           ) : (
             <>+{transaction.amount} лв</>
