@@ -134,11 +134,17 @@ export default function Dashboard({ session }: { session: Session | null }) {
       if (res.ok && res.status == 200) {
         setAddMoneyModalOpen(false);
         setAddMoneyLoading(false);
+        setCardNumber("");
+        setCvv("");
+        setExpiry("");
         getBallance();
         getTransactions();
       } else if (res.status == 404) {
         setAddMoneyModalOpen(false);
         setAddMoneyLoading(false);
+        setCardNumber("");
+        setCvv("");
+        setExpiry("");
         toast({
           title: "Нещо се обърка!",
           status: "error",
@@ -309,10 +315,10 @@ export default function Dashboard({ session }: { session: Session | null }) {
                       <Input
                         onChange={(e) => {
                           let input = e.target.value;
-                          input = input.replace(/\D/g, ""); // remove non-numeric characters
-                          input = input.substring(0, 16); // limit to 16 digits
+                          input = input.replace(/\D/g, "");
+                          input = input.substring(0, 16);
                           if (input.match(/.{1,4}/g) != null)
-                            input = input.match(/.{1,4}/g).join(" "); //group every 4 digits
+                            input = input.match(/.{1,4}/g).join(" ");
 
                           setCardNumber(input);
                         }}
@@ -449,6 +455,9 @@ export default function Dashboard({ session }: { session: Session | null }) {
                       <Button
                         onClick={() => {
                           setAddMoneyModalOpen(false);
+                          setCardNumber("");
+                          setCvv("");
+                          setExpiry("");
                         }}
                         colorScheme="red"
                         width={"100%"}
