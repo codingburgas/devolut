@@ -62,6 +62,7 @@ const Footer = () => {
           </Tooltip>
           <Tooltip label="GitHub" bg={'black'} textColor={'white'}>
             <IconButton
+              onClick={() => {window.open('https://github.com/DSDimitrov19', '_blank')}}
               bg={'whiteAlpha.200'}
               aria-label="GitHub"
               icon={<GitHubIcon />}
