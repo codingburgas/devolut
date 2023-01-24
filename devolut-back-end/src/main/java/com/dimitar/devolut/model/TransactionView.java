@@ -7,6 +7,8 @@ public class TransactionView {
 
     private String receiverDTag;
 
+    private String cardNumber;
+
     private double amount;
 
     private Date created_at;
@@ -41,5 +43,13 @@ public class TransactionView {
 
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 }

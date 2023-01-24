@@ -15,6 +15,8 @@ public class Transaction {
 
     private int receiverId;
 
+    private String cardNumber;
+
     private double amount;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -59,5 +61,13 @@ public class Transaction {
 
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 }

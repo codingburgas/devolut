@@ -1,5 +1,6 @@
 package com.dimitar.devolut.controller;
 
+import com.dimitar.devolut.model.TransactionCard;
 import com.dimitar.devolut.model.TransactionUser;
 import com.dimitar.devolut.model.TransactionView;
 import com.dimitar.devolut.model.User;
@@ -22,4 +23,7 @@ public class TransactionController {
 
     @PostMapping("/user")
     public ResponseEntity<List<TransactionView>> getUserTransactions(@RequestBody User user) { return transactionService.getUserTransactions(user); };
+
+    @PostMapping("/card")
+    public ResponseEntity createCardTransaction(@RequestBody TransactionCard transactionCard) { return transactionService.createCardTransaction(transactionCard); };
 }

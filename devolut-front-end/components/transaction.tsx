@@ -28,19 +28,31 @@ export default function Transaction({
         justifyContent={"space-between"}
       >
         <Flex alignItems={"center"} gap={"3"}>
-            {transaction.senderDTag == session.user.dTag ? (
-                <Avatar name={(transaction.receiverDTag)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
-            ) : (
-                <Avatar name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
-            )}
+          {(() => {
+            if (transaction.senderDTag) {
+              if (transaction.senderDTag == session.user.dTag) {
+                return <Avatar name={(transaction.receiverDTag)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+              } else {
+                return <Avatar name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+              }
+            } else {
+              return <Avatar src="https://cdn-icons-png.flaticon.com/512/4614/4614115.png" name={(transaction.cardNumber)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+            }
+          })()}
 
           <Flex direction={"column"}>
             <Text>
-              {transaction.senderDTag == session.user.dTag ? (
-                <>До {transaction.receiverDTag}</>
-              ) : (
-                <>От {transaction.senderDTag}</>
-              )}
+              {(() => {
+                if (transaction.senderDTag) {
+                  if (transaction.senderDTag == session.user.dTag) {
+                    return <>До {transaction.receiverDTag}</>
+                  } else {
+                    return <>От {transaction.senderDTag}</>
+                  }
+                } else {
+                  return <>От карта завършваща на {transaction.cardNumber.slice(-4)}</>
+                }
+              })()}
             </Text>
 
             <Text opacity={"0.8"} fontSize={"sm"}>
@@ -50,11 +62,17 @@ export default function Transaction({
         </Flex>
 
         <Text>
-          {transaction.senderDTag == session.user.dTag ? (
-            <>-{transaction.amount} лв</>
-          ) : (
-            <>+{transaction.amount} лв</>
-          )}
+          {(() => {
+            if (transaction.senderDTag) {
+              if (transaction.senderDTag == session.user.dTag) {
+                return <>-{transaction.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} лв</>
+              } else {
+                return <>+{transaction.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} лв</>
+              }
+            } else {
+              return <>+{transaction.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} лв</>
+            }
+          })()}
         </Text>
       </Flex>
     </>

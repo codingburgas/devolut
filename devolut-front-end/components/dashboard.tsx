@@ -57,7 +57,12 @@ export default function Dashboard({ session }: { session: Session | null }) {
   const [sendMoneyModalOpen, setSendMoneyModalOpen] = useState(false);
   const [addMoneyModalOpen, setAddMoneyModalOpen] = useState(false);
   const [sendMoneyLoading, setSendMoneyLoading] = useState(false);
+  const [addMoneyLoading, setAddMoneyLoading] = useState(false);
   const toast = useToast();
+
+  const [cardNumber, setCardNumber] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [expiry, setExpiry] = useState("");
 
   useEffect(() => {
     getBallance();
@@ -108,7 +113,44 @@ export default function Dashboard({ session }: { session: Session | null }) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmitAddMoney = async (e: any) => {
+    e.preventDefault();
+
+    setAddMoneyLoading(true);
+
+    setTimeout(async () => {
+      const res = await fetch(process.env.BACKEND_URL + "/transaction/card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cardNumber: e.target.cardNumber.value,
+          amount: e.target.amount.value,
+          dTag: session?.user.dTag,
+          id: session?.user.id,
+          password: session?.user.password,
+        }),
+      });
+
+      if (res.ok && res.status == 200) {
+        setAddMoneyModalOpen(false);
+        setAddMoneyLoading(false);
+        getBallance();
+        getTransactions();
+      } else if (res.status == 404) {
+        setAddMoneyModalOpen(false);
+        setAddMoneyLoading(false);
+        toast({
+          title: "Нещо се обърка!",
+          status: "error",
+          variant: "left-accent",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(1300) - Math.ceil(1000)) + Math.ceil(1000)));
+  };
+
+  const handleSubmitSendMoney = async (e: any) => {
     e.preventDefault();
 
     setSendMoneyLoading(true);
@@ -121,18 +163,21 @@ export default function Dashboard({ session }: { session: Session | null }) {
       .then((res) => res.text())
       .then((data) => {
         setTimeout(async () => {
-          const res = await fetch(process.env.BACKEND_URL + "/transaction/create", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              senderId: session?.user.id,
-              receiverId: Number(data),
-              amount: e.target.amount.value,
-              dTag: session?.user.dTag,
-              id: session?.user.id,
-              password: session?.user.password
-            }),
-          });
+          const res = await fetch(
+            process.env.BACKEND_URL + "/transaction/create",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                senderId: session?.user.id,
+                receiverId: Number(data),
+                amount: e.target.amount.value,
+                dTag: session?.user.dTag,
+                id: session?.user.id,
+                password: session?.user.password,
+              }),
+            }
+          );
 
           if (res.ok && res.status == 200) {
             setSendMoneyModalOpen(false);
@@ -239,6 +284,9 @@ export default function Dashboard({ session }: { session: Session | null }) {
           <Modal
             onClose={() => {
               setAddMoneyModalOpen(false);
+              setCardNumber("");
+              setCvv("");
+              setExpiry("");
             }}
             isOpen={addMoneyModalOpen}
             isCentered
@@ -248,7 +296,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
               <ModalHeader>Добави пари</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmitAddMoney}>
                   <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
                     <Flex wrap={"wrap"}>
                       <Text
@@ -259,6 +307,15 @@ export default function Dashboard({ session }: { session: Session | null }) {
                         Номер на карта
                       </Text>
                       <Input
+                        onChange={(e) => {
+                          let input = e.target.value;
+                          input = input.replace(/\D/g, ""); // remove non-numeric characters
+                          input = input.substring(0, 16); // limit to 16 digits
+                          if (input.match(/.{1,4}/g) != null)
+                            input = input.match(/.{1,4}/g).join(" "); //group every 4 digits
+
+                          setCardNumber(input);
+                        }}
                         width={"100%"}
                         height={"12"}
                         marginBottom={"2"}
@@ -267,11 +324,84 @@ export default function Dashboard({ session }: { session: Session | null }) {
                         fontWeight={"semibold"}
                         variant="outline"
                         colorScheme={"blue"}
-                        name="receiver"
-                        placeholder="Devolut Tag"
+                        name="cardNumber"
+                        placeholder="0000 0000 0000 0000"
                         required
-                        disabled={sendMoneyLoading}
+                        value={cardNumber}
+                        disabled={addMoneyLoading}
                       ></Input>
+                    </Flex>
+
+                    <Flex wrap={"nowrap"} gap={"2"}>
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          CVV код
+                        </Text>
+                        <Input
+                          onChange={(e) => {
+                            let input = e.target.value;
+                            input = input.replace(/\D/g, "");
+                            input = input.substring(0, 3);
+
+                            setCvv(input);
+                          }}
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="cvv"
+                          placeholder="410"
+                          required
+                          value={cvv}
+                          disabled={addMoneyLoading}
+                        ></Input>
+                      </Flex>
+
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Валидност на картата
+                        </Text>
+                        <Input
+                          onChange={(e) => {
+                            let input = e.target.value;
+                            input = input.replace(/\D/g, "");
+                            input = input.substring(0, 4);
+                            let month = input.substring(0, 2);
+                            let year = input.substring(2);
+                            if (parseInt(month) > 12) {
+                              month = "12";
+                            }
+                            if (input.length > 1) input = `${month}/${year}`;
+
+                            setExpiry(input);
+                          }}
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="expiry"
+                          placeholder="11/21"
+                          required
+                          value={expiry}
+                          disabled={addMoneyLoading}
+                        ></Input>
+                      </Flex>
                     </Flex>
 
                     <Flex wrap={"wrap"}>
@@ -285,13 +415,13 @@ export default function Dashboard({ session }: { session: Session | null }) {
                       <NumberInput
                         defaultValue={1}
                         min={0.01}
-                        max={balance}
+                        max={1000}
                         precision={2}
                         size="md"
                         marginBottom={"2"}
                         width={"100%"}
                         name="amount"
-                        isDisabled={sendMoneyLoading}
+                        isDisabled={addMoneyLoading}
                       >
                         <NumberInputField />
                         <NumberInputStepper>
@@ -312,17 +442,17 @@ export default function Dashboard({ session }: { session: Session | null }) {
                         colorScheme="green"
                         type="submit"
                         width={"100%"}
-                        isLoading={sendMoneyLoading}
+                        isLoading={addMoneyLoading}
                       >
-                        Изпрати
+                        Добави
                       </Button>
                       <Button
                         onClick={() => {
-                          setSendMoneyModalOpen(false);
+                          setAddMoneyModalOpen(false);
                         }}
                         colorScheme="red"
                         width={"100%"}
-                        isDisabled={sendMoneyLoading}
+                        isDisabled={addMoneyLoading}
                       >
                         Откажи
                       </Button>
@@ -330,8 +460,8 @@ export default function Dashboard({ session }: { session: Session | null }) {
                   </Flex>
                 </form>
               </ModalBody>
-             </ModalContent>
-            </Modal>
+            </ModalContent>
+          </Modal>
 
           <Modal
             onClose={() => {
@@ -345,7 +475,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
               <ModalHeader>Изпрати пари</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmitSendMoney}>
                   <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
                     <Flex wrap={"wrap"}>
                       <Text
