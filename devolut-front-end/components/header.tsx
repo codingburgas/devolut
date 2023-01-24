@@ -9,6 +9,7 @@ import {
   Avatar,
   AvatarBadge,
   Icon,
+  Badge,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { AtSignIcon } from '@chakra-ui/icons';
@@ -39,15 +40,16 @@ const Header = ({ session, router, signOut }: {session: Session | null, router: 
     >
       <Link href="/">
         <Text
+          as={"h2"}
           fontFamily={'heading'}
           fontWeight={'bold'}
-          fontSize={'2xl'}
+          fontSize={'3xl'}
           lineHeight={'1.33'}
           display={'flex'}
           alignItems={'flex-start'}
           width={'fit-content'}
         >
-          Devolut
+          Devolut<Badge marginLeft={"2"} fontWeight={"500"} fontSize={"sm"} colorScheme={"blue"}>v0.3</Badge>
         </Text>
       </Link>
 
