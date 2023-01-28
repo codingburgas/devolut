@@ -60,7 +60,7 @@ const Header = ({ session, router, signOut }: {session: Session | null, router: 
           </Avatar>
         </MenuButton>
         <MenuList>
-            <MenuItem isDisabled icon={<AccountIcon/>} iconSpacing={'1'} onClick={() => router?.push('/account')} fontWeight={'500'}>Акаунт</MenuItem>
+            <MenuItem icon={<AccountIcon/>} iconSpacing={'1'} onClick={() => router?.push('/account')} fontWeight={'500'}>Акаунт</MenuItem>
             <MenuItem icon={<AtSignIcon fontSize={'lg'} display={'block'}/>} command={"Изход"} iconSpacing={'1'} onClick={() => signOut()} fontWeight={'500'}>{session?.user.dTag}</MenuItem>
         </MenuList>
       </Menu>
