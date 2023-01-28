@@ -30,8 +30,8 @@ export default function Home() {
         width={'full'}
         maxWidth={{ base: 'xl', md: '7xl' }}
         marginInline={'auto'}
-        paddingInlineStart={{ base: '6', md: '8' }}
-        paddingInlineEnd={{ base: '6', md: '8' }}
+        paddingInlineStart={{ base: '2', md: '8' }}
+        paddingInlineEnd={{ base: '2', md: '8' }}
       >
         <Header session={session} router={router} signOut={signOut} />
 
