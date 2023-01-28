@@ -282,8 +282,8 @@ export default function Dashboard({ session }: { session: Session | null }) {
             justifyContent={"flex-start"}
             justifyItems={"flex-start"}
           >
-            {transactions.map((transaction) => (
-              <Transaction transaction={transaction} session={session} />
+            {transactions.map((transaction, index) => (
+              <Transaction key={index} transaction={transaction} session={session} />
             ))}
           </Box>
 
