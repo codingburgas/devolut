@@ -31,12 +31,12 @@ export default function Transaction({
           {(() => {
             if (transaction.senderDTag) {
               if (transaction.senderDTag == session.user.dTag) {
-                return <Avatar name={(transaction.receiverDTag)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+                return <Avatar name={transaction.receiverDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
               } else {
                 return <Avatar name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
               }
             } else {
-              return <Avatar src="https://cdn-icons-png.flaticon.com/512/4614/4614115.png" name={(transaction.cardNumber)} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+              return <Avatar src="https://cdn-icons-png.flaticon.com/512/4614/4614115.png" name={transaction.cardNumber} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
             }
           })()}
 

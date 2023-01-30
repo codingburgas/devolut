@@ -101,7 +101,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
 
     const result = await res.json();
 
-    setTransactions(result.slice(-4).reverse());
+    setTransactions(result.reverse());
   }
 
   useEffect(() => {
