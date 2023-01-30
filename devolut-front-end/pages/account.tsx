@@ -82,81 +82,83 @@ export default function Account() {
               paddingInlineEnd={{ base: "6", md: "8" }}
             >
               <Skeleton isLoaded={!isLoading} borderRadius={"md"}>
-                <FormControl id="firstName">
-                  <FormLabel>Име</FormLabel>
-                  <Input
-                    backgroundColor={"gray.700"}
-                    type="text"
-                    fontWeight={"semibold"}
-                    value={
-                      session?.user.firstName +
-                      " " +
-                      session?.user.middleName +
-                      " " +
-                      session?.user.lastName
-                    }
-                    readOnly
-                  />
-                </FormControl>
-                <FormControl id="dTag">
-                  <FormLabel>Devolut Tag</FormLabel>
-                  <Input
-                    type="text"
-                    backgroundColor={"gray.700"}
-                    fontWeight={"semibold"}
-                    value={session?.user.dTag}
-                    readOnly
-                  />
-                </FormControl>
-                <FormControl id="dateOfBirth">
-                  <FormLabel>Дата на раждане</FormLabel>
-                  <Input
-                    type="text"
-                    backgroundColor={"gray.700"}
-                    fontWeight={"semibold"}
-                    value={formatDate(session?.user.dateOfBirth)}
-                    readOnly
-                  />
-                </FormControl>
-                <FormControl id="address">
-                  <FormLabel>Адрес</FormLabel>
-                  <Textarea
-                    readOnly
-                    resize={"none"}
-                    backgroundColor={"gray.700"}
-                    fontWeight={"semibold"}
-                    ref={ref}
-                    value={
-                      session?.user.address +
-                      "\n" +
-                      session?.user.postCode +
-                      " " +
-                      session?.user.city +
-                      "\n" +
-                      session?.user.country
-                    }
-                  />
-                </FormControl>
-                <FormControl id="phoneNumber">
-                  <FormLabel>Телефонен номер</FormLabel>
-                  <Input
-                    type="number"
-                    backgroundColor={"gray.700"}
-                    fontWeight={"semibold"}
-                    value={session?.user.phoneNumber}
-                    readOnly
-                  />
-                </FormControl>
-                <FormControl id="email">
-                  <FormLabel>Имейл адрес</FormLabel>
-                  <Input
-                    type="email"
-                    backgroundColor={"gray.700"}
-                    fontWeight={"semibold"}
-                    value={session?.user.email}
-                    readOnly
-                  />
-                </FormControl>
+                <Stack spacing={"4"}>
+                  <FormControl id="firstName">
+                    <FormLabel>Име</FormLabel>
+                    <Input
+                      backgroundColor={"gray.700"}
+                      type="text"
+                      fontWeight={"semibold"}
+                      value={
+                        session?.user.firstName +
+                        " " +
+                        session?.user.middleName +
+                        " " +
+                        session?.user.lastName
+                      }
+                      readOnly
+                    />
+                  </FormControl>
+                  <FormControl id="dTag">
+                    <FormLabel>Devolut Tag</FormLabel>
+                    <Input
+                      type="text"
+                      backgroundColor={"gray.700"}
+                      fontWeight={"semibold"}
+                      value={session?.user.dTag}
+                      readOnly
+                    />
+                  </FormControl>
+                  <FormControl id="dateOfBirth">
+                    <FormLabel>Дата на раждане</FormLabel>
+                    <Input
+                      type="text"
+                      backgroundColor={"gray.700"}
+                      fontWeight={"semibold"}
+                      value={formatDate(session?.user.dateOfBirth)}
+                      readOnly
+                    />
+                  </FormControl>
+                  <FormControl id="address">
+                    <FormLabel>Адрес</FormLabel>
+                    <Textarea
+                      readOnly
+                      resize={"none"}
+                      backgroundColor={"gray.700"}
+                      fontWeight={"semibold"}
+                      ref={ref}
+                      value={
+                        session?.user.address +
+                        "\n" +
+                        session?.user.postCode +
+                        " " +
+                        session?.user.city +
+                        "\n" +
+                        session?.user.country
+                      }
+                    />
+                  </FormControl>
+                  <FormControl id="phoneNumber">
+                    <FormLabel>Телефонен номер</FormLabel>
+                    <Input
+                      type="number"
+                      backgroundColor={"gray.700"}
+                      fontWeight={"semibold"}
+                      value={session?.user.phoneNumber}
+                      readOnly
+                    />
+                  </FormControl>
+                  <FormControl id="email">
+                    <FormLabel>Имейл адрес</FormLabel>
+                    <Input
+                      type="email"
+                      backgroundColor={"gray.700"}
+                      fontWeight={"semibold"}
+                      value={session?.user.email}
+                      readOnly
+                    />
+                  </FormControl>
+                </Stack>
               </Skeleton>
             </Stack>
           </Flex>
