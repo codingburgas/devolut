@@ -335,6 +335,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
                         required
                         value={cardNumber}
                         disabled={addMoneyLoading}
+                        minLength={19}
                       ></Input>
                     </Flex>
 
@@ -368,6 +369,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
                           required
                           value={cvv}
                           disabled={addMoneyLoading}
+                          minLength={3}
                         ></Input>
                       </Flex>
 
@@ -406,6 +408,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
                           required
                           value={expiry}
                           disabled={addMoneyLoading}
+                          minLength={5}
                         ></Input>
                       </Flex>
                     </Flex>
