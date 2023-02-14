@@ -47,7 +47,12 @@ export default function Transaction({
                 </Box> 
               }
             } else {
-              return <Avatar src="https://cdn-icons-png.flaticon.com/512/4614/4614115.png" name={"Credit card"} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+              return <Box display={"flex"} alignItems={"flex-end"}>
+                <Avatar src="https://cdn-icons-png.flaticon.com/512/504/504674.png" name={"Credit card"} borderWidth={"2px"} borderColor={"whiteAlpha.50"} marginRight={"-4"} />
+                <Box backgroundColor={"blue.300"} border='2px' borderColor={'black'} zIndex={"3"} w={"5"} h={"5"} borderRadius={"xl"} display={"flex"} alignItems={'center'} alignContent={'center'} justifyContent={'center'} justifyItems={'center'}>
+                    <ArrowBackIcon color={"black"} />
+                </Box>
+              </Box> 
             }
           })()}
 
