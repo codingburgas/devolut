@@ -13,6 +13,10 @@ public class TransactionView {
 
     private Date created_at;
 
+    private String senderAvatarSrc;
+
+    private String receiverAvatarSrc;
+
     public String getSenderDTag() {
         return senderDTag;
     }
@@ -51,5 +55,21 @@ public class TransactionView {
 
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
+    }
+
+    public String getSenderAvatarSrc() {
+        return senderAvatarSrc;
+    }
+
+    public void setSenderAvatarSrc(String senderAvatarSrc) {
+        this.senderAvatarSrc = senderAvatarSrc;
+    }
+
+    public String getReceiverAvatarSrc() {
+        return receiverAvatarSrc;
+    }
+
+    public void setReceiverAvatarSrc(String receiverAvatarSrc) {
+        this.receiverAvatarSrc = receiverAvatarSrc;
     }
 }

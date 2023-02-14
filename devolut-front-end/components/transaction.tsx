@@ -1,4 +1,5 @@
-import { Avatar, Flex, Text } from "@chakra-ui/react";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 
 function formatDate(string) {
@@ -31,12 +32,22 @@ export default function Transaction({
           {(() => {
             if (transaction.senderDTag) {
               if (transaction.senderDTag == session.user.dTag) {
-                return <Avatar name={transaction.receiverDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+                return <Box display={"flex"} alignItems={"flex-end"}>
+                  <Avatar src={transaction.receiverAvatarSrc} name={transaction.receiverDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} marginRight={"-4"} />
+                  <Box backgroundColor={"blue.300"} border='2px' borderColor={'black'} zIndex={"3"} w={"5"} h={"5"} borderRadius={"xl"} display={"flex"} alignItems={'center'} alignContent={'center'} justifyContent={'center'} justifyItems={'center'}>
+                    <ArrowForwardIcon color={"black"} />
+                  </Box>
+                </Box>
               } else {
-                return <Avatar name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+                return <Box display={"flex"} alignItems={"flex-end"}>
+                  <Avatar src={transaction.senderAvatarSrc} name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} marginRight={"-4"} />
+                  <Box backgroundColor={"blue.300"} border='2px' borderColor={'black'} zIndex={"3"} w={"5"} h={"5"} borderRadius={"xl"} display={"flex"} alignItems={'center'} alignContent={'center'} justifyContent={'center'} justifyItems={'center'}>
+                    <ArrowBackIcon color={"black"} />
+                  </Box>
+                </Box> 
               }
             } else {
-              return <Avatar src="https://cdn-icons-png.flaticon.com/512/4614/4614115.png" name={transaction.cardNumber} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
+              return <Avatar src="https://cdn-icons-png.flaticon.com/512/4614/4614115.png" name={"Credit card"} borderWidth={"2px"} borderColor={"whiteAlpha.50"} />
             }
           })()}
 

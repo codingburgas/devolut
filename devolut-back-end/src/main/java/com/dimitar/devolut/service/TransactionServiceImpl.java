@@ -71,10 +71,12 @@ public class TransactionServiceImpl implements TransactionService {
                 transactionView.setCardNumber(transaction.getCardNumber());
             } else {
                 transactionView.setSenderDTag(userRepository.findById(transaction.getSenderId()).getdTag());
+                transactionView.setSenderAvatarSrc(userRepository.findById(transaction.getSenderId()).getAvatarSrc());
             }
             transactionView.setReceiverDTag(userRepository.findById(transaction.getReceiverId()).getdTag());
             transactionView.setAmount(transaction.getAmount());
             transactionView.setCreated_at(transaction.getCreated_at());
+            transactionView.setReceiverAvatarSrc(userRepository.findById(transaction.getReceiverId()).getAvatarSrc());
 
             transactionViews.add(transactionView);
         }));
