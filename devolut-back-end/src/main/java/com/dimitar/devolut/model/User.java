@@ -27,6 +27,8 @@ public class User {
     private String region;
     private String phoneNumber;
 
+    private String avatarSrc;
+
     @Column(columnDefinition = "double default '0.0'", nullable = false)
     private double balance;
 
@@ -148,5 +150,13 @@ public class User {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public String getAvatarSrc() {
+        return avatarSrc;
+    }
+
+    public void setAvatarSrc(String avatarSrc) {
+        this.avatarSrc = avatarSrc;
     }
 }

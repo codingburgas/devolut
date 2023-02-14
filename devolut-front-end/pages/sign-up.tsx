@@ -156,6 +156,10 @@ export default function Signup() {
                   <FormLabel>Devolut Tag</FormLabel>
                   <Input type="text" maxLength={10} />
                 </FormControl>
+                <FormControl id="avatarSrc" isRequired>
+                  <FormLabel>Снимка на акаунта</FormLabel>
+                  <Input type="url" />
+                </FormControl>
                 <FormControl id="password" isRequired>
                   <FormLabel>Парола</FormLabel>
                   <InputGroup>

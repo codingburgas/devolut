@@ -55,7 +55,7 @@ const Header = ({ session, router, signOut }: {session: Session | null, router: 
 
       <Menu colorScheme={'gray'} placement={'bottom-end'}>
         <MenuButton>
-          <Avatar borderWidth={'2px'} borderColor={'whiteAlpha.50'}>
+          <Avatar src={session?.user.avatarSrc} borderColor={'whiteAlpha.50'}>
             <AvatarBadge boxSize="20px" bg="green.400" borderColor={'#111'} />
           </Avatar>
         </MenuButton>

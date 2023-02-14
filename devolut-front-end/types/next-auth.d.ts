@@ -17,7 +17,8 @@ declare module "next-auth" {
         city: string,
         region: string,
         phoneNumber: string,
-        balance: number
+        balance: number,
+        avatarSrc: string
     }
   }
 }
