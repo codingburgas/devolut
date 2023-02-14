@@ -48,6 +48,7 @@ export default function Signup() {
         city: e.target.city.value,
         region: e.target.region.value,
         phoneNumber: e.target.phoneNumber.value,
+        avatarSrc: e.target.avatarSrc.value
       };
 
       const res = await fetch(process.env.BACKEND_URL + "/user/create", {
