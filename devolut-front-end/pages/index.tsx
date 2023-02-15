@@ -14,10 +14,15 @@ import { useRouter } from "next/router";
 import { IncomingMessage } from "http";
 import Dashboard from "../components/dashboard";
 import Head from "next/head";
+import { useEffect } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!session?.user.avatarSrc || session.user.avatarSrc == "") signOut();
+  }, []);
 
   return (
     <>
