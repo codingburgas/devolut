@@ -14,6 +14,7 @@ import {
   useColorModeValue,
   Link,
   useToast,
+  Avatar,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -27,6 +28,7 @@ export default function Signup() {
   const router = useRouter();
   const toast = useToast();
   const [signUpLoading, setSignUpLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
 
   const handleSignup = async (e: any) => {
     e.preventDefault();
@@ -157,10 +159,14 @@ export default function Signup() {
                   <FormLabel>Devolut Tag</FormLabel>
                   <Input type="text" maxLength={10} />
                 </FormControl>
-                <FormControl id="avatarSrc" isRequired>
-                  <FormLabel>Снимка на акаунта</FormLabel>
-                  <Input type="url" />
-                </FormControl>
+                <Box display={"flex"} alignItems={"end"} gap={"4"}>
+                  <FormControl id="avatarSrc" isRequired>
+                    <FormLabel>Снимка на акаунта</FormLabel>
+                    <Input type="url" onChange={(e) => (setImageUrl(e.target.value))}/>
+                  </FormControl>
+
+                  <Avatar src={imageUrl} />
+                </Box>
                 <FormControl id="password" isRequired>
                   <FormLabel>Парола</FormLabel>
                   <InputGroup>
