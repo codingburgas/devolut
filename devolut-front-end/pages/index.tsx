@@ -21,6 +21,9 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
+    console.log(!session?.user.avatarSrc)
+    console.log(session.user.avatarSrc == "")
+
     if (!session?.user.avatarSrc || session.user.avatarSrc == "") signOut();
   }, []);
 
