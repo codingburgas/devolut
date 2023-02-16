@@ -14,11 +14,12 @@ import { useRouter } from "next/router";
 import { IncomingMessage } from "http";
 import Dashboard from "../components/dashboard";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
+  const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
     if (!session?.user.avatarSrc || session.user.avatarSrc == "") signOut();
@@ -40,7 +41,7 @@ export default function Home() {
       >
         <Header session={session} router={router} signOut={signOut} />
 
-        <Tabs isFitted colorScheme={'blue'}>
+        <Tabs onChange={(index) => setTabIndex(index)} isFitted colorScheme={'blue'}>
           <TabList>
             <Tab fontWeight={'semibold'}>Табло</Tab>
             <Tab isDisabled fontWeight={'semibold'}>Карти</Tab>
@@ -48,10 +49,18 @@ export default function Home() {
             <Tab isDisabled fontWeight={'semibold'}>Сейфове</Tab>
           </TabList>
           <TabPanels>
-            <TabPanel><Dashboard session={session}/></TabPanel>
-            <TabPanel></TabPanel>
-            <TabPanel></TabPanel>
-            <TabPanel></TabPanel>
+            <TabPanel>
+              {tabIndex == 0 ? (<Dashboard session={session}/>) : (<></>)}
+            </TabPanel>
+            <TabPanel>
+              {tabIndex == 1 ? (<></>) : (<></>)}
+            </TabPanel>
+            <TabPanel>
+              {tabIndex == 2 ? (<></>) : (<></>)}
+            </TabPanel>
+            <TabPanel>
+              {tabIndex == 3 ? (<></>) : (<></>)}
+            </TabPanel>
           </TabPanels>
         </Tabs>
 
