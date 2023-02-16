@@ -51,7 +51,7 @@ function Balance({ n }: { n: number }) {
 }
 
 export default function Dashboard({ session }: { session: Session | null }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0.0);
   const [transactions, setTransactions] = useState([]);
   const [sendMoneyModalOpen, setSendMoneyModalOpen] = useState(false);
@@ -67,10 +67,9 @@ export default function Dashboard({ session }: { session: Session | null }) {
   useEffect(() => {
     getBallance();
     getTransactions();
-    setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-    }, 800);
+    }, 500);
   }, []);
 
   async function getBallance() {
