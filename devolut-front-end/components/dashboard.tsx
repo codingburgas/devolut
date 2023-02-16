@@ -17,6 +17,7 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  ScaleFade,
   Skeleton,
   Stat,
   StatHelpText,
@@ -207,370 +208,372 @@ export default function Dashboard({ session }: { session: Session | null }) {
   return (
     <>
       <Skeleton isLoaded={!isLoading} borderRadius={"md"}>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          gap={"2"}
-          paddingX={"6"}
-          paddingY={"3"}
-          height={"auto"}
-          backgroundColor={"gray.700"}
-          borderRadius={"md"}
-        >
-          <Box display={"flex"} justifyContent={"space-between"}>
-            <Stat>
-              <StatNumber>
-                <Balance n={balance} />
-              </StatNumber>
-              <StatHelpText>Български Лев</StatHelpText>
-            </Stat>
-
-            <Avatar
-              name="BgFlag"
-              src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Flag_of_Bulgaria.png"
-            />
-          </Box>
-
+        <ScaleFade initialScale={0.9} in={!isLoading}>
           <Box
             display={"flex"}
-            justifyContent={"flex-start"}
-            justifyItems={"flex-start"}
-          >
-            <ButtonGroup>
-              <Button
-                onClick={() => {
-                  setAddMoneyModalOpen(true);
-                }}
-                leftIcon={<SmallAddIcon />}
-                size={"md"}
-                rounded={"xl"}
-                h={"9"}
-                colorScheme={"blue"}
-              >
-                Добави пари
-              </Button>
-              <Button
-                onClick={() => {
-                  setSendMoneyModalOpen(true);
-                }}
-                leftIcon={<ArrowForwardIcon />}
-                size={"md"}
-                rounded={"xl"}
-                h={"9"}
-                colorScheme={"blue"}
-              >
-                Изпрати
-              </Button>
-            </ButtonGroup>
-          </Box>
-
-          <Text
-            marginTop={"2"}
-            marginBottom={"3"}
-            opacity={"0.8"}
-            fontSize={"md"}
-          >
-            Трансакции
-          </Text>
-
-          <Box
-            display={"flex"}
-            flexWrap={"wrap"}
             flexDirection={"column"}
-            gap={"3"}
-            justifyContent={"flex-start"}
-            justifyItems={"flex-start"}
+            gap={"2"}
+            paddingX={"6"}
+            paddingY={"3"}
+            height={"auto"}
+            backgroundColor={"gray.700"}
+            borderRadius={"md"}
           >
-            {transactions.map((transaction, index) => (
-              <Transaction key={index} transaction={transaction} session={session} />
-            ))}
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Stat>
+                <StatNumber>
+                  <Balance n={balance} />
+                </StatNumber>
+                <StatHelpText>Български Лев</StatHelpText>
+              </Stat>
+
+              <Avatar
+                name="BgFlag"
+                src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Flag_of_Bulgaria.png"
+              />
+            </Box>
+
+            <Box
+              display={"flex"}
+              justifyContent={"flex-start"}
+              justifyItems={"flex-start"}
+            >
+              <ButtonGroup>
+                <Button
+                  onClick={() => {
+                    setAddMoneyModalOpen(true);
+                  }}
+                  leftIcon={<SmallAddIcon />}
+                  size={"md"}
+                  rounded={"xl"}
+                  h={"9"}
+                  colorScheme={"blue"}
+                >
+                  Добави пари
+                </Button>
+                <Button
+                  onClick={() => {
+                    setSendMoneyModalOpen(true);
+                  }}
+                  leftIcon={<ArrowForwardIcon />}
+                  size={"md"}
+                  rounded={"xl"}
+                  h={"9"}
+                  colorScheme={"blue"}
+                >
+                  Изпрати
+                </Button>
+              </ButtonGroup>
+            </Box>
+
+            <Text
+              marginTop={"2"}
+              marginBottom={"3"}
+              opacity={"0.8"}
+              fontSize={"md"}
+            >
+              Трансакции
+            </Text>
+
+            <Box
+              display={"flex"}
+              flexWrap={"wrap"}
+              flexDirection={"column"}
+              gap={"3"}
+              justifyContent={"flex-start"}
+              justifyItems={"flex-start"}
+            >
+              {transactions.map((transaction, index) => (
+                <Transaction key={index} transaction={transaction} session={session} />
+              ))}
+            </Box>
+
+            <Modal
+              onClose={() => {
+                setAddMoneyModalOpen(false);
+                setCardNumber("");
+                setCvv("");
+                setExpiry("");
+              }}
+              isOpen={addMoneyModalOpen}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Добави пари</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <form onSubmit={handleSubmitAddMoney}>
+                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Номер на карта
+                        </Text>
+                        <Input
+                          onChange={(e) => {
+                            let input = e.target.value;
+                            input = input.replace(/\D/g, "");
+                            input = input.substring(0, 16);
+                            if (input.match(/.{1,4}/g) != null)
+                              input = input.match(/.{1,4}/g).join(" ");
+
+                            setCardNumber(input);
+                          }}
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="cardNumber"
+                          placeholder="0000 0000 0000 0000"
+                          required
+                          value={cardNumber}
+                          disabled={addMoneyLoading}
+                          minLength={19}
+                        ></Input>
+                      </Flex>
+
+                      <Flex wrap={"nowrap"} gap={"2"}>
+                        <Flex wrap={"wrap"}>
+                          <Text
+                            marginBottom={"1"}
+                            fontSize={"md"}
+                            fontWeight={"semibold"}
+                          >
+                            CVV код
+                          </Text>
+                          <Input
+                            onChange={(e) => {
+                              let input = e.target.value;
+                              input = input.replace(/\D/g, "");
+                              input = input.substring(0, 3);
+
+                              setCvv(input);
+                            }}
+                            width={"100%"}
+                            height={"12"}
+                            marginBottom={"2"}
+                            minWidth={"0"}
+                            fontSize={"lg"}
+                            fontWeight={"semibold"}
+                            variant="outline"
+                            colorScheme={"blue"}
+                            name="cvv"
+                            placeholder="410"
+                            required
+                            value={cvv}
+                            disabled={addMoneyLoading}
+                            minLength={3}
+                          ></Input>
+                        </Flex>
+
+                        <Flex wrap={"wrap"}>
+                          <Text
+                            marginBottom={"1"}
+                            fontSize={"md"}
+                            fontWeight={"semibold"}
+                          >
+                            Валидност на картата
+                          </Text>
+                          <Input
+                            onChange={(e) => {
+                              let input = e.target.value;
+                              input = input.replace(/\D/g, "");
+                              input = input.substring(0, 4);
+                              let month = input.substring(0, 2);
+                              let year = input.substring(2);
+                              if (parseInt(month) > 12) {
+                                month = "12";
+                              }
+                              if (input.length > 1) input = `${month}/${year}`;
+
+                              setExpiry(input);
+                            }}
+                            width={"100%"}
+                            height={"12"}
+                            marginBottom={"2"}
+                            minWidth={"0"}
+                            fontSize={"lg"}
+                            fontWeight={"semibold"}
+                            variant="outline"
+                            colorScheme={"blue"}
+                            name="expiry"
+                            placeholder="11/21"
+                            required
+                            value={expiry}
+                            disabled={addMoneyLoading}
+                            minLength={5}
+                          ></Input>
+                        </Flex>
+                      </Flex>
+
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Сума
+                        </Text>
+                        <NumberInput
+                          defaultValue={1}
+                          min={0.01}
+                          max={1000}
+                          precision={2}
+                          size="md"
+                          marginBottom={"2"}
+                          width={"100%"}
+                          name="amount"
+                          isDisabled={addMoneyLoading}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      </Flex>
+
+                      <Flex
+                        justify="space-between"
+                        wrap="nowrap"
+                        mb="3"
+                        mt="4"
+                        gap={"2"}
+                      >
+                        <Button
+                          colorScheme="green"
+                          type="submit"
+                          width={"100%"}
+                          isLoading={addMoneyLoading}
+                        >
+                          Добави
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setAddMoneyModalOpen(false);
+                            setCardNumber("");
+                            setCvv("");
+                            setExpiry("");
+                          }}
+                          colorScheme="red"
+                          width={"100%"}
+                          isDisabled={addMoneyLoading}
+                        >
+                          Откажи
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </form>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+
+            <Modal
+              onClose={() => {
+                setSendMoneyModalOpen(false);
+              }}
+              isOpen={sendMoneyModalOpen}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Изпрати пари</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <form onSubmit={handleSubmitSendMoney}>
+                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Получател
+                        </Text>
+                        <Input
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="receiver"
+                          placeholder="Devolut Tag"
+                          required
+                          disabled={sendMoneyLoading}
+                        ></Input>
+                      </Flex>
+
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Сума
+                        </Text>
+                        <NumberInput
+                          defaultValue={1}
+                          min={0.01}
+                          max={balance}
+                          precision={2}
+                          size="md"
+                          marginBottom={"2"}
+                          width={"100%"}
+                          name="amount"
+                          isDisabled={sendMoneyLoading}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      </Flex>
+
+                      <Flex
+                        justify="space-between"
+                        wrap="nowrap"
+                        mb="3"
+                        mt="4"
+                        gap={"2"}
+                      >
+                        <Button
+                          colorScheme="green"
+                          type="submit"
+                          width={"100%"}
+                          isLoading={sendMoneyLoading}
+                        >
+                          Изпрати
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setSendMoneyModalOpen(false);
+                          }}
+                          colorScheme="red"
+                          width={"100%"}
+                          isDisabled={sendMoneyLoading}
+                        >
+                          Откажи
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </form>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
           </Box>
-
-          <Modal
-            onClose={() => {
-              setAddMoneyModalOpen(false);
-              setCardNumber("");
-              setCvv("");
-              setExpiry("");
-            }}
-            isOpen={addMoneyModalOpen}
-            isCentered
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Добави пари</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <form onSubmit={handleSubmitAddMoney}>
-                  <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
-                    <Flex wrap={"wrap"}>
-                      <Text
-                        marginBottom={"1"}
-                        fontSize={"md"}
-                        fontWeight={"semibold"}
-                      >
-                        Номер на карта
-                      </Text>
-                      <Input
-                        onChange={(e) => {
-                          let input = e.target.value;
-                          input = input.replace(/\D/g, "");
-                          input = input.substring(0, 16);
-                          if (input.match(/.{1,4}/g) != null)
-                            input = input.match(/.{1,4}/g).join(" ");
-
-                          setCardNumber(input);
-                        }}
-                        width={"100%"}
-                        height={"12"}
-                        marginBottom={"2"}
-                        minWidth={"0"}
-                        fontSize={"lg"}
-                        fontWeight={"semibold"}
-                        variant="outline"
-                        colorScheme={"blue"}
-                        name="cardNumber"
-                        placeholder="0000 0000 0000 0000"
-                        required
-                        value={cardNumber}
-                        disabled={addMoneyLoading}
-                        minLength={19}
-                      ></Input>
-                    </Flex>
-
-                    <Flex wrap={"nowrap"} gap={"2"}>
-                      <Flex wrap={"wrap"}>
-                        <Text
-                          marginBottom={"1"}
-                          fontSize={"md"}
-                          fontWeight={"semibold"}
-                        >
-                          CVV код
-                        </Text>
-                        <Input
-                          onChange={(e) => {
-                            let input = e.target.value;
-                            input = input.replace(/\D/g, "");
-                            input = input.substring(0, 3);
-
-                            setCvv(input);
-                          }}
-                          width={"100%"}
-                          height={"12"}
-                          marginBottom={"2"}
-                          minWidth={"0"}
-                          fontSize={"lg"}
-                          fontWeight={"semibold"}
-                          variant="outline"
-                          colorScheme={"blue"}
-                          name="cvv"
-                          placeholder="410"
-                          required
-                          value={cvv}
-                          disabled={addMoneyLoading}
-                          minLength={3}
-                        ></Input>
-                      </Flex>
-
-                      <Flex wrap={"wrap"}>
-                        <Text
-                          marginBottom={"1"}
-                          fontSize={"md"}
-                          fontWeight={"semibold"}
-                        >
-                          Валидност на картата
-                        </Text>
-                        <Input
-                          onChange={(e) => {
-                            let input = e.target.value;
-                            input = input.replace(/\D/g, "");
-                            input = input.substring(0, 4);
-                            let month = input.substring(0, 2);
-                            let year = input.substring(2);
-                            if (parseInt(month) > 12) {
-                              month = "12";
-                            }
-                            if (input.length > 1) input = `${month}/${year}`;
-
-                            setExpiry(input);
-                          }}
-                          width={"100%"}
-                          height={"12"}
-                          marginBottom={"2"}
-                          minWidth={"0"}
-                          fontSize={"lg"}
-                          fontWeight={"semibold"}
-                          variant="outline"
-                          colorScheme={"blue"}
-                          name="expiry"
-                          placeholder="11/21"
-                          required
-                          value={expiry}
-                          disabled={addMoneyLoading}
-                          minLength={5}
-                        ></Input>
-                      </Flex>
-                    </Flex>
-
-                    <Flex wrap={"wrap"}>
-                      <Text
-                        marginBottom={"1"}
-                        fontSize={"md"}
-                        fontWeight={"semibold"}
-                      >
-                        Сума
-                      </Text>
-                      <NumberInput
-                        defaultValue={1}
-                        min={0.01}
-                        max={1000}
-                        precision={2}
-                        size="md"
-                        marginBottom={"2"}
-                        width={"100%"}
-                        name="amount"
-                        isDisabled={addMoneyLoading}
-                      >
-                        <NumberInputField />
-                        <NumberInputStepper>
-                          <NumberIncrementStepper />
-                          <NumberDecrementStepper />
-                        </NumberInputStepper>
-                      </NumberInput>
-                    </Flex>
-
-                    <Flex
-                      justify="space-between"
-                      wrap="nowrap"
-                      mb="3"
-                      mt="4"
-                      gap={"2"}
-                    >
-                      <Button
-                        colorScheme="green"
-                        type="submit"
-                        width={"100%"}
-                        isLoading={addMoneyLoading}
-                      >
-                        Добави
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setAddMoneyModalOpen(false);
-                          setCardNumber("");
-                          setCvv("");
-                          setExpiry("");
-                        }}
-                        colorScheme="red"
-                        width={"100%"}
-                        isDisabled={addMoneyLoading}
-                      >
-                        Откажи
-                      </Button>
-                    </Flex>
-                  </Flex>
-                </form>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-
-          <Modal
-            onClose={() => {
-              setSendMoneyModalOpen(false);
-            }}
-            isOpen={sendMoneyModalOpen}
-            isCentered
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Изпрати пари</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <form onSubmit={handleSubmitSendMoney}>
-                  <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
-                    <Flex wrap={"wrap"}>
-                      <Text
-                        marginBottom={"1"}
-                        fontSize={"md"}
-                        fontWeight={"semibold"}
-                      >
-                        Получател
-                      </Text>
-                      <Input
-                        width={"100%"}
-                        height={"12"}
-                        marginBottom={"2"}
-                        minWidth={"0"}
-                        fontSize={"lg"}
-                        fontWeight={"semibold"}
-                        variant="outline"
-                        colorScheme={"blue"}
-                        name="receiver"
-                        placeholder="Devolut Tag"
-                        required
-                        disabled={sendMoneyLoading}
-                      ></Input>
-                    </Flex>
-
-                    <Flex wrap={"wrap"}>
-                      <Text
-                        marginBottom={"1"}
-                        fontSize={"md"}
-                        fontWeight={"semibold"}
-                      >
-                        Сума
-                      </Text>
-                      <NumberInput
-                        defaultValue={1}
-                        min={0.01}
-                        max={balance}
-                        precision={2}
-                        size="md"
-                        marginBottom={"2"}
-                        width={"100%"}
-                        name="amount"
-                        isDisabled={sendMoneyLoading}
-                      >
-                        <NumberInputField />
-                        <NumberInputStepper>
-                          <NumberIncrementStepper />
-                          <NumberDecrementStepper />
-                        </NumberInputStepper>
-                      </NumberInput>
-                    </Flex>
-
-                    <Flex
-                      justify="space-between"
-                      wrap="nowrap"
-                      mb="3"
-                      mt="4"
-                      gap={"2"}
-                    >
-                      <Button
-                        colorScheme="green"
-                        type="submit"
-                        width={"100%"}
-                        isLoading={sendMoneyLoading}
-                      >
-                        Изпрати
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setSendMoneyModalOpen(false);
-                        }}
-                        colorScheme="red"
-                        width={"100%"}
-                        isDisabled={sendMoneyLoading}
-                      >
-                        Откажи
-                      </Button>
-                    </Flex>
-                  </Flex>
-                </form>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-        </Box>
+        </ScaleFade>
       </Skeleton>
     </>
   );
