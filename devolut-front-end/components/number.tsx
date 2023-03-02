@@ -16,7 +16,7 @@ export default function Balance({ n }: { n: number }) {
         gap: 4,
       }}
     >
-      <animated.div>{number.to((n) => n.toFixed(2))}</animated.div> лв
+      <animated.div>{number.to((n) => (n.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</animated.div> лв
     </div>
   );
 }
