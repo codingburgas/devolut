@@ -15,7 +15,7 @@ import { IncomingMessage } from "http";
 import Dashboard from "../components/dashboard";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import Vault from "../components/vaults";
+import Vaults from "../components/vaults";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -60,7 +60,7 @@ export default function Home() {
               {tabIndex == 2 ? (<></>) : (<></>)}
             </TabPanel>
             <TabPanel>
-              {tabIndex == 3 ? (<Vault session={session} />) : (<></>)}
+              {tabIndex == 3 ? (<Vaults session={session} />) : (<></>)}
             </TabPanel>
           </TabPanels>
         </Tabs>
