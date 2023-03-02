@@ -140,6 +140,18 @@ export default function Dashboard({ session }: { session: Session | null }) {
 
     setSendMoneyLoading(true);
 
+    if (e.target.receiver.value == session?.user.dTag) {
+      setSendMoneyLoading(false);
+      
+      return toast({
+        title: "Не можете да пратите пари на себе си!",
+        status: "error",
+        variant: "left-accent",
+        position: "bottom-right",
+        isClosable: true,
+      });
+    }
+
     await fetch(process.env.BACKEND_URL + "/user/getIdByDTag", {
       method: "POST",
       body: e.target.receiver.value,
@@ -263,7 +275,11 @@ export default function Dashboard({ session }: { session: Session | null }) {
               justifyItems={"flex-start"}
             >
               {transactions.map((transaction, index) => (
-                <Transaction key={index} transaction={transaction} session={session} />
+                <Transaction
+                  key={index}
+                  transaction={transaction}
+                  session={session}
+                />
               ))}
             </Box>
 
