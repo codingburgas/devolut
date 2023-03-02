@@ -27,29 +27,8 @@ import {
 } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-import { useSpring, animated } from "react-spring";
+import Balance from "./number";
 import Transaction from "./transaction";
-
-function Balance({ n }: { n: number }) {
-  const { number } = useSpring({
-    number: n,
-    delay: 100,
-    config: { mass: 1, tension: 20, friction: 10 },
-  });
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "start",
-        gap: 4,
-      }}
-    >
-      <animated.div>{number.to((n) => n.toFixed(2))}</animated.div> лв
-    </div>
-  );
-}
 
 export default function Dashboard({ session }: { session: Session | null }) {
   const [isLoading, setIsLoading] = useState(true);
