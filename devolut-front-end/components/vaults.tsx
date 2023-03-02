@@ -29,16 +29,20 @@ import {
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
 import Balance from "./number";
+import Vault from "./vault";
 
-export default function Vault({ session }: { session: Session | null }) {
+export default function Vaults({ session }: { session: Session | null }) {
   const [vaults, setVaults] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [createVaultModalOpen, setCreateVaultModalOpen] = useState(false);
   const [createVaultLoading, setCreateVaultLoading] = useState(false);
+  const [hovered, setHovered] = useState('');
   const toast = useToast();
 
   useEffect(() => {
     getVaults();
+
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
@@ -59,7 +63,14 @@ export default function Vault({ session }: { session: Session | null }) {
 
     const vaults = await res.json();
 
+    let totalBalance = 0;
+
+    vaults.forEach(vault => {
+      totalBalance += vault.balance;
+    });
+
     setVaults(vaults);
+    setTotalBalance(totalBalance);
   }
 
   const handleVaultCreation = async (e: any) => {
@@ -136,7 +147,7 @@ export default function Vault({ session }: { session: Session | null }) {
             <Box display={"flex"} justifyContent={"space-between"}>
               <Stat>
                 <StatNumber>
-                  <Balance n={0} />
+                  <Balance n={totalBalance} />
                 </StatNumber>
                 <StatHelpText>Общ баланс</StatHelpText>
               </Stat>
@@ -195,7 +206,7 @@ export default function Vault({ session }: { session: Session | null }) {
               justifyItems={"flex-start"}
             >
               {vaults.map((vault, index) => (
-                <>{vault.name}</>
+                <Vault key={vault.id} vault={vault} hovered={hovered} setHovered={setHovered} />
               ))}
             </Box>
 
