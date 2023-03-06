@@ -45,14 +45,14 @@ export default function Dashboard({ session }: { session: Session | null }) {
   const [expiry, setExpiry] = useState("");
 
   useEffect(() => {
-    getBallance();
+    getBalance();
     getTransactions();
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
   }, []);
 
-  async function getBallance() {
+  async function getBalance() {
     const res = await fetch(process.env.BACKEND_URL + "/user/read", {
       method: "POST",
       body: JSON.stringify({
@@ -85,7 +85,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      getBallance();
+      getBalance();
       getTransactions();
     }, 5000);
 
