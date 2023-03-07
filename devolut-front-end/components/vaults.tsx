@@ -440,7 +440,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                           width={"100%"}
                           isLoading={addMoneyIntoVaultLoading}
                         >
-                          Създай
+                          Добави
                         </Button>
                         <Button
                           onClick={() => {
