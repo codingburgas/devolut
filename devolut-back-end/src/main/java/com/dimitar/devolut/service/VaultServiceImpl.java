@@ -133,6 +133,10 @@ public class VaultServiceImpl implements VaultService {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
+        if (userRepository.findById(vaultShare.getUserId()) == null) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         Vault vault = vaultRepository.findById(vaultShare.getVaultId());
 
         if (vault == null || (vault.getOwnerId() != vaultShare.getId()) || (vault.getOwnerId() == vaultShare.getUserId()) || (!vault.getType().equals("shared"))) {
