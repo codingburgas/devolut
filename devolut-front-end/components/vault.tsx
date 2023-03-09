@@ -10,7 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-export default function Vault({ vault, hovered, setHovered, setCurrentVault, setAddMoneyIntoVaultModalOpen, setTakeMoneyFromVaultModalOpen }) {
+export default function Vault({ session, vault, hovered, setHovered, setCurrentVault, setAddMoneyIntoVaultModalOpen, setTakeMoneyFromVaultModalOpen, setGiveUserVaultAccessModalOpen }) {
   return (
     <>
       <Skeleton
@@ -108,7 +108,7 @@ export default function Vault({ vault, hovered, setHovered, setCurrentVault, set
                     setTakeMoneyFromVaultModalOpen(true)
                   }}
                 ></IconButton>
-                {vault.type == "shared" ? (
+                {vault.type == "shared" && vault.ownerId == session.user.id ? (
                   <IconButton
                     colorScheme={"blue"}
                     fontSize={"md"}
@@ -116,6 +116,10 @@ export default function Vault({ vault, hovered, setHovered, setCurrentVault, set
                     height={"8"}
                     aria-label="Сподели сейф"
                     icon={<LinkIcon />}
+                    onClick={() => {
+                      setCurrentVault(vault)
+                      setGiveUserVaultAccessModalOpen(true)
+                    }}
                   ></IconButton>
                 ) : (
                   <></>

@@ -1,5 +1,7 @@
 import { PlusSquareIcon, SmallAddIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertIcon,
   Avatar,
   Box,
   Button,
@@ -42,10 +44,14 @@ export default function Vaults({ session }: { session: Session | null }) {
     useState(false);
   const [takeMoneyFromVaultModalOpen, setTakeMoneyFromVaultModalOpen] =
     useState(false);
+  const [giveUserVaultAccessModalOpen, setGiveUserVaultAccessModalOpen] =
+    useState(false);
   const [createVaultLoading, setCreateVaultLoading] = useState(false);
   const [addMoneyIntoVaultLoading, setAddMoneyIntoVaultLoading] =
     useState(false);
   const [takeMoneyFromVaultLoading, setTakeMoneyFromVaultLoading] =
+    useState(false);
+  const [giveUserVaultAccessLoading, setGiveUserVaultAccessLoading] =
     useState(false);
   const [hovered, setHovered] = useState("");
   const toast = useToast();
@@ -164,7 +170,7 @@ export default function Vaults({ session }: { session: Session | null }) {
           amount: e.target.amount.value,
           id: session?.user.id,
           dTag: session?.user.dTag,
-          password: session?.user.password
+          password: session?.user.password,
         }),
       });
 
@@ -186,7 +192,7 @@ export default function Vaults({ session }: { session: Session | null }) {
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 
-  const handleVaultWithdraw =async (e: any) => {
+  const handleVaultWithdraw = async (e: any) => {
     e.preventDefault();
 
     setTakeMoneyFromVaultLoading(true);
@@ -200,7 +206,7 @@ export default function Vaults({ session }: { session: Session | null }) {
           amount: e.target.amount.value,
           id: session?.user.id,
           dTag: session?.user.dTag,
-          password: session?.user.password
+          password: session?.user.password,
         }),
       });
 
@@ -220,7 +226,68 @@ export default function Vaults({ session }: { session: Session | null }) {
         });
       }
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
-  }
+  };
+
+  const handleVaultShare = async (e: any) => {
+    e.preventDefault();
+
+    setGiveUserVaultAccessLoading(true);
+
+    await fetch(process.env.BACKEND_URL + "/user/getIdByDTag", {
+      method: "POST",
+      body: e.target.dTag.value,
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.text())
+      .then((data) => {
+        setTimeout(async () => {
+          const res = await fetch(process.env.BACKEND_URL + "/vault/share", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              vaultId: currentVault.id,
+              userId: Number(data),
+              id: session?.user.id,
+              dTag: session?.user.dTag,
+              password: session?.user.password,
+            }),
+          });
+
+          if (res.ok && res.status == 200) {
+            toast({
+              title: `Успешно споделихте ${currentVault.name} с ${e.target.dTag.value}!`,
+              status: "success",
+              variant: "left-accent",
+              position: "bottom-right",
+              isClosable: true,
+            });
+            setGiveUserVaultAccessModalOpen(false);
+            setGiveUserVaultAccessLoading(false);
+            getVaults();
+          } else if (res.status == 302) {
+            toast({
+              title: `Потребителят ${e.target.dTag.value} вече има достъп до ${currentVault.name}!`,
+              status: "error",
+              variant: "left-accent",
+              position: "bottom-right",
+              isClosable: true,
+            });
+            setGiveUserVaultAccessModalOpen(false);
+            setGiveUserVaultAccessLoading(false);
+          } else if (res.status == 404) {
+            setGiveUserVaultAccessModalOpen(false);
+            setGiveUserVaultAccessLoading(false);
+            toast({
+              title: "Не можете да споделите сейфа със себе си!",
+              status: "error",
+              variant: "left-accent",
+              position: "bottom-right",
+              isClosable: true,
+            });
+          }
+        }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
+      });
+  };
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -307,17 +374,40 @@ export default function Vaults({ session }: { session: Session | null }) {
               justifyItems={"flex-start"}
               marginBottom={"2"}
             >
-              {vaults.map((vault, index) => (
-                <Vault
-                  key={vault.id}
-                  vault={vault}
-                  hovered={hovered}
-                  setHovered={setHovered}
-                  setCurrentVault={setCurrentVault}
-                  setAddMoneyIntoVaultModalOpen={setAddMoneyIntoVaultModalOpen}
-                  setTakeMoneyFromVaultModalOpen={setTakeMoneyFromVaultModalOpen}
-                />
-              ))}
+              {(() => {
+                if (vaults.length == 0) {
+                  return (
+                    <Alert
+                      status="info"
+                      borderRadius={"md"}
+                      fontWeight={"semibold"}
+                    >
+                      <AlertIcon />
+                      Нямате сейфове към този момент!
+                    </Alert>
+                  );
+                } else {
+                  return vaults.map((vault, index) => (
+                    <Vault
+                      key={vault.id}
+                      session={session}
+                      vault={vault}
+                      hovered={hovered}
+                      setHovered={setHovered}
+                      setCurrentVault={setCurrentVault}
+                      setAddMoneyIntoVaultModalOpen={
+                        setAddMoneyIntoVaultModalOpen
+                      }
+                      setTakeMoneyFromVaultModalOpen={
+                        setTakeMoneyFromVaultModalOpen
+                      }
+                      setGiveUserVaultAccessModalOpen={
+                        setGiveUserVaultAccessModalOpen
+                      }
+                    />
+                  ));
+                }
+              })()}
             </Box>
 
             <Modal
@@ -477,7 +567,12 @@ export default function Vaults({ session }: { session: Session | null }) {
                           disabled={addMoneyIntoVaultLoading}
                         >
                           {vaults.map((vault) => (
-                            <option selected={currentVault.id == vault.id} value={vault.id}>{vault.name}</option>
+                            <option
+                              selected={currentVault.id == vault.id}
+                              value={vault.id}
+                            >
+                              {vault.name}
+                            </option>
                           ))}
                         </Select>
                       </Flex>
@@ -604,6 +699,76 @@ export default function Vaults({ session }: { session: Session | null }) {
                           colorScheme="red"
                           width={"100%"}
                           isDisabled={takeMoneyFromVaultLoading}
+                        >
+                          Откажи
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </form>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+
+            <Modal
+              onClose={() => {
+                setGiveUserVaultAccessModalOpen(false);
+                setCurrentVault([]);
+              }}
+              isOpen={giveUserVaultAccessModalOpen}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Споделяне на {currentVault.name}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <form onSubmit={handleVaultShare}>
+                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Devolut Tag
+                        </Text>
+                        <Input
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="dTag"
+                          required
+                          disabled={giveUserVaultAccessLoading}
+                        ></Input>
+                      </Flex>
+
+                      <Flex
+                        justify="space-between"
+                        wrap="nowrap"
+                        mb="3"
+                        mt="4"
+                        gap={"2"}
+                      >
+                        <Button
+                          colorScheme="green"
+                          type="submit"
+                          width={"100%"}
+                          isLoading={giveUserVaultAccessLoading}
+                        >
+                          Сподели
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setGiveUserVaultAccessModalOpen(false);
+                          }}
+                          colorScheme="red"
+                          width={"100%"}
+                          isDisabled={giveUserVaultAccessLoading}
                         >
                           Откажи
                         </Button>
