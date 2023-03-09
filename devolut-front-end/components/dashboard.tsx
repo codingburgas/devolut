@@ -116,7 +116,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
         setCardNumber("");
         setCvv("");
         setExpiry("");
-        getBallance();
+        getBalance();
         getTransactions();
       } else if (res.status == 404) {
         setAddMoneyModalOpen(false);
@@ -179,7 +179,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
           if (res.ok && res.status == 200) {
             setSendMoneyModalOpen(false);
             setSendMoneyLoading(false);
-            getBallance();
+            getBalance();
             getTransactions();
           } else if (res.status == 404) {
             setSendMoneyModalOpen(false);
@@ -273,6 +273,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
               gap={"3"}
               justifyContent={"flex-start"}
               justifyItems={"flex-start"}
+              marginBottom={"2"}
             >
               {transactions.map((transaction, index) => (
                 <Transaction
