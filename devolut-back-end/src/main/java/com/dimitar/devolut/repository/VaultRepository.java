@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VaultRepository extends JpaRepository<Vault, Integer> {
+    public Vault findById(int id);
     public Vault findByOwnerIdAndName(int ownerId, String name);
 }
