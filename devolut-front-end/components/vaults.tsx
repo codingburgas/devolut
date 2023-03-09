@@ -284,6 +284,16 @@ export default function Vaults({ session }: { session: Session | null }) {
               position: "bottom-right",
               isClosable: true,
             });
+          } else if (res.status == 500) {
+            setGiveUserVaultAccessModalOpen(false);
+            setGiveUserVaultAccessLoading(false);
+            toast({
+              title: "Потребител с такъв Devolut Tag не съществува!",
+              status: "error",
+              variant: "left-accent",
+              position: "bottom-right",
+              isClosable: true,
+            });
           }
         }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
       });
