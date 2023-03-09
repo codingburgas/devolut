@@ -3,6 +3,7 @@ package com.dimitar.devolut.service;
 import com.dimitar.devolut.model.*;
 import com.dimitar.devolut.repository.TransactionRepository;
 import com.dimitar.devolut.repository.UserRepository;
+import com.dimitar.devolut.repository.VaultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private VaultRepository vaultRepository;
+
 
     @Override
     public ResponseEntity createTransaction(TransactionUser transactionUser) {
@@ -34,6 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setReceiverId(transactionUser.getReceiverId());
         transaction.setSenderId(transactionUser.getSenderId());
         transaction.setAmount(transactionUser.getAmount());
+        transaction.setType("user");
 
         User receiver = userRepository.findById(transaction.getReceiverId());
         User sender = userRepository.findById(transaction.getSenderId());
@@ -67,16 +72,30 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.findAllBySenderIdOrReceiverId(user.getId(), user.getId()).forEach((transaction -> {
             TransactionView transactionView = new TransactionView();
-            if (transaction.getSenderId() == 0) {
-                transactionView.setCardNumber(transaction.getCardNumber());
-            } else {
-                transactionView.setSenderDTag(userRepository.findById(transaction.getSenderId()).getdTag());
-                transactionView.setSenderAvatarSrc(userRepository.findById(transaction.getSenderId()).getAvatarSrc());
+            switch (transaction.getType()) {
+                case "user" -> {
+                    transactionView.setType("user");
+                    transactionView.setSenderDTag(userRepository.findById(transaction.getSenderId()).getdTag());
+                    transactionView.setReceiverDTag(userRepository.findById(transaction.getReceiverId()).getdTag());
+                    transactionView.setSenderAvatarSrc(userRepository.findById(transaction.getSenderId()).getAvatarSrc());
+                    transactionView.setReceiverAvatarSrc(userRepository.findById(transaction.getReceiverId()).getAvatarSrc());
+                }
+                case "card" -> {
+                    transactionView.setType("card");
+                    transactionView.setCardNumber(transaction.getCardNumber());
+                }
+                case "vault" -> {
+                    transactionView.setType("vault");
+                    if (transaction.getAction().equals("withdraw")) {
+                        transactionView.setSenderVaultName(vaultRepository.findById(transaction.getReceiverId()).getName());
+                    } else if (transaction.getAction().equals("deposit")) {
+                        transactionView.setReceiverVaultName(vaultRepository.findById(transaction.getReceiverId()).getName());
+                    }
+                }
             }
-            transactionView.setReceiverDTag(userRepository.findById(transaction.getReceiverId()).getdTag());
+
             transactionView.setAmount(transaction.getAmount());
             transactionView.setCreated_at(transaction.getCreated_at());
-            transactionView.setReceiverAvatarSrc(userRepository.findById(transaction.getReceiverId()).getAvatarSrc());
 
             transactionViews.add(transactionView);
         }));
@@ -95,10 +114,10 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Transaction transaction = new Transaction();
-        transaction.setSenderId(0);
         transaction.setReceiverId(transactionCard.getId());
         transaction.setCardNumber(transactionCard.getCardNumber());
         transaction.setAmount(transactionCard.getAmount());
+        transaction.setType("card");
 
         User receiver = userRepository.findById(transaction.getReceiverId());
 

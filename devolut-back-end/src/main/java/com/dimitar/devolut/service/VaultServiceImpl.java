@@ -1,7 +1,10 @@
 package com.dimitar.devolut.service;
 
+import com.dimitar.devolut.model.Transaction;
 import com.dimitar.devolut.model.User;
 import com.dimitar.devolut.model.Vault;
+import com.dimitar.devolut.model.VaultUser;
+import com.dimitar.devolut.repository.TransactionRepository;
 import com.dimitar.devolut.repository.UserRepository;
 import com.dimitar.devolut.repository.VaultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,9 @@ public class VaultServiceImpl implements VaultService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Override
     public ResponseEntity createVault(Vault vault) {
@@ -48,5 +54,75 @@ public class VaultServiceImpl implements VaultService {
         }));
 
         return ResponseEntity.ok(vaults);
+    }
+
+    @Override
+    public ResponseEntity depositMoney(VaultUser vaultUser) {
+        if (vaultUser.getdTag() != null && vaultUser.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(vaultUser.getdTag(), vaultUser.getId(), vaultUser.getPassword()) == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.setSenderId(vaultUser.getId());
+        transaction.setReceiverId(vaultUser.getVaultId());
+        transaction.setAmount(vaultUser.getAmount());
+        transaction.setAction("deposit");
+        transaction.setType("vault");
+
+        User sender = userRepository.findById(vaultUser.getId());
+        Vault receiver = vaultRepository.findById(vaultUser.getVaultId());
+
+        if ((sender.getBalance() < transaction.getAmount()) || transaction.getAmount() <= 0 || receiver == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        transactionRepository.save(transaction);
+
+        receiver.setBalance(receiver.getBalance() + transaction.getAmount());
+        sender.setBalance(sender.getBalance() - transaction.getAmount());
+
+        userRepository.save(sender);
+        vaultRepository.save(receiver);
+
+        return ResponseEntity.ok(null);
+    }
+
+    @Override
+    public ResponseEntity withdrawMoney(VaultUser vaultUser) {
+        if (vaultUser.getdTag() != null && vaultUser.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(vaultUser.getdTag(), vaultUser.getId(), vaultUser.getPassword()) == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.setSenderId(vaultUser.getVaultId());
+        transaction.setReceiverId(vaultUser.getId());
+        transaction.setAmount(vaultUser.getAmount());
+        transaction.setAction("withdraw");
+        transaction.setType("vault");
+
+        Vault sender = vaultRepository.findById(vaultUser.getVaultId());
+        User receiver = userRepository.findById(vaultUser.getId());
+
+        if (sender == null || (sender.getBalance() < transaction.getAmount()) || transaction.getAmount() <= 0) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        transactionRepository.save(transaction);
+
+        receiver.setBalance(receiver.getBalance() + transaction.getAmount());
+        sender.setBalance(sender.getBalance() - transaction.getAmount());
+
+        vaultRepository.save(sender);
+        userRepository.save(receiver);
+
+        return ResponseEntity.ok(null);
     }
 }

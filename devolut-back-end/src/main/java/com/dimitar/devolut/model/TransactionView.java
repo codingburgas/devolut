@@ -7,6 +7,10 @@ public class TransactionView {
 
     private String receiverDTag;
 
+    private String receiverVaultName;
+
+    private String senderVaultName;
+
     private String cardNumber;
 
     private double amount;
@@ -16,6 +20,8 @@ public class TransactionView {
     private String senderAvatarSrc;
 
     private String receiverAvatarSrc;
+
+    private String type;
 
     public String getSenderDTag() {
         return senderDTag;
@@ -31,6 +37,22 @@ public class TransactionView {
 
     public void setReceiverDTag(String receiverDTag) {
         this.receiverDTag = receiverDTag;
+    }
+
+    public String getReceiverVaultName() {
+        return receiverVaultName;
+    }
+
+    public void setReceiverVaultName(String receiverVaultName) {
+        this.receiverVaultName = receiverVaultName;
+    }
+
+    public String getSenderVaultName() {
+        return senderVaultName;
+    }
+
+    public void setSenderVaultName(String senderVaultName) {
+        this.senderVaultName = senderVaultName;
     }
 
     public double getAmount() {
@@ -71,5 +93,13 @@ public class TransactionView {
 
     public void setReceiverAvatarSrc(String receiverAvatarSrc) {
         this.receiverAvatarSrc = receiverAvatarSrc;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

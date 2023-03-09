@@ -19,6 +19,10 @@ public class Transaction {
 
     private double amount;
 
+    private String type;
+
+    private String action;
+
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date created_at;
@@ -47,6 +51,14 @@ public class Transaction {
         this.receiverId = receiverId;
     }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
     public double getAmount() {
         return amount;
     }
@@ -55,19 +67,27 @@ public class Transaction {
         this.amount = amount;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     public Date getCreated_at() {
         return created_at;
     }
 
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
-    }
-
-    public String getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
     }
 }
