@@ -1,5 +1,7 @@
 import { SmallAddIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertIcon,
   Avatar,
   Box,
   Button,
@@ -142,7 +144,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
 
     if (e.target.receiver.value == session?.user.dTag) {
       setSendMoneyLoading(false);
-      
+
       return toast({
         title: "Не можете да пратите пари на себе си!",
         status: "error",
@@ -275,13 +277,24 @@ export default function Dashboard({ session }: { session: Session | null }) {
               justifyItems={"flex-start"}
               marginBottom={"2"}
             >
-              {transactions.map((transaction, index) => (
-                <Transaction
-                  key={index}
-                  transaction={transaction}
-                  session={session}
-                />
-              ))}
+              {(() => {
+                if (transactions.length == 0) {
+                  return (
+                    <Alert status="info" borderRadius={"md"} fontWeight={"semibold"}>
+                      <AlertIcon />
+                      Нямате трансакции към този момент!
+                    </Alert>
+                  );
+                } else {
+                  return transactions.map((transaction, index) => (
+                    <Transaction
+                      key={index}
+                      transaction={transaction}
+                      session={session}
+                    />
+                  ));
+                }
+              })()}
             </Box>
 
             <Modal
