@@ -33,14 +33,19 @@ import Vault from "./vault";
 
 export default function Vaults({ session }: { session: Session | null }) {
   const [vaults, setVaults] = useState([]);
+  const [currentVault, setCurrentVault] = useState([]);
   const [balance, setBalance] = useState(0.0);
   const [totalBalance, setTotalBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [createVaultModalOpen, setCreateVaultModalOpen] = useState(false);
   const [addMoneyIntoVaultModalOpen, setAddMoneyIntoVaultModalOpen] =
     useState(false);
+  const [takeMoneyFromVaultModalOpen, setTakeMoneyFromVaultModalOpen] =
+    useState(false);
   const [createVaultLoading, setCreateVaultLoading] = useState(false);
   const [addMoneyIntoVaultLoading, setAddMoneyIntoVaultLoading] =
+    useState(false);
+  const [takeMoneyFromVaultLoading, setTakeMoneyFromVaultLoading] =
     useState(false);
   const [hovered, setHovered] = useState("");
   const toast = useToast();
@@ -145,6 +150,78 @@ export default function Vaults({ session }: { session: Session | null }) {
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 
+  const handleVaultDeposit = async (e: any) => {
+    e.preventDefault();
+
+    setAddMoneyIntoVaultLoading(true);
+
+    setTimeout(async () => {
+      const res = await fetch(process.env.BACKEND_URL + "/vault/deposit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vaultId: e.target.vault.value,
+          amount: e.target.amount.value,
+          id: session?.user.id,
+          dTag: session?.user.dTag,
+          password: session?.user.password
+        }),
+      });
+
+      if (res.ok && res.status == 200) {
+        setAddMoneyIntoVaultModalOpen(false);
+        setAddMoneyIntoVaultLoading(false);
+        getVaults();
+      } else if (res.status == 404) {
+        setAddMoneyIntoVaultModalOpen(false);
+        setAddMoneyIntoVaultLoading(false);
+        toast({
+          title: "Нещо се обърка!",
+          status: "error",
+          variant: "left-accent",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
+  };
+
+  const handleVaultWithdraw =async (e: any) => {
+    e.preventDefault();
+
+    setTakeMoneyFromVaultLoading(true);
+
+    setTimeout(async () => {
+      const res = await fetch(process.env.BACKEND_URL + "/vault/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vaultId: currentVault.id,
+          amount: e.target.amount.value,
+          id: session?.user.id,
+          dTag: session?.user.dTag,
+          password: session?.user.password
+        }),
+      });
+
+      if (res.ok && res.status == 200) {
+        setTakeMoneyFromVaultModalOpen(false);
+        setTakeMoneyFromVaultLoading(false);
+        getVaults();
+      } else if (res.status == 404) {
+        setTakeMoneyFromVaultModalOpen(false);
+        setTakeMoneyFromVaultLoading(false);
+        toast({
+          title: "Нещо се обърка!",
+          status: "error",
+          variant: "left-accent",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
+  }
+
   useEffect(() => {
     const interval = setInterval(async () => {
       getVaults();
@@ -228,6 +305,7 @@ export default function Vaults({ session }: { session: Session | null }) {
               gap={"3"}
               justifyContent={"flex-start"}
               justifyItems={"flex-start"}
+              marginBottom={"2"}
             >
               {vaults.map((vault, index) => (
                 <Vault
@@ -235,6 +313,9 @@ export default function Vaults({ session }: { session: Session | null }) {
                   vault={vault}
                   hovered={hovered}
                   setHovered={setHovered}
+                  setCurrentVault={setCurrentVault}
+                  setAddMoneyIntoVaultModalOpen={setAddMoneyIntoVaultModalOpen}
+                  setTakeMoneyFromVaultModalOpen={setTakeMoneyFromVaultModalOpen}
                 />
               ))}
             </Box>
@@ -362,6 +443,7 @@ export default function Vaults({ session }: { session: Session | null }) {
             <Modal
               onClose={() => {
                 setAddMoneyIntoVaultModalOpen(false);
+                setCurrentVault([]);
               }}
               isOpen={addMoneyIntoVaultModalOpen}
               isCentered
@@ -371,7 +453,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                 <ModalHeader>Добави пари</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                  <form>
+                  <form onSubmit={handleVaultDeposit}>
                     <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
                       <Flex wrap={"wrap"}>
                         <Text
@@ -395,7 +477,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                           disabled={addMoneyIntoVaultLoading}
                         >
                           {vaults.map((vault) => (
-                            <option value={vault.id}>{vault.name}</option>
+                            <option selected={currentVault.id == vault.id} value={vault.id}>{vault.name}</option>
                           ))}
                         </Select>
                       </Flex>
@@ -449,6 +531,79 @@ export default function Vaults({ session }: { session: Session | null }) {
                           colorScheme="red"
                           width={"100%"}
                           isDisabled={addMoneyIntoVaultLoading}
+                        >
+                          Откажи
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </form>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+
+            <Modal
+              onClose={() => {
+                setTakeMoneyFromVaultModalOpen(false);
+              }}
+              isOpen={takeMoneyFromVaultModalOpen}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Изтегли пари от {currentVault.name}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <form onSubmit={handleVaultWithdraw}>
+                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Сума
+                        </Text>
+                        <NumberInput
+                          defaultValue={1}
+                          min={0.01}
+                          max={currentVault.balance}
+                          precision={2}
+                          size="md"
+                          marginBottom={"2"}
+                          width={"100%"}
+                          name="amount"
+                          isDisabled={takeMoneyFromVaultLoading}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      </Flex>
+
+                      <Flex
+                        justify="space-between"
+                        wrap="nowrap"
+                        mb="3"
+                        mt="4"
+                        gap={"2"}
+                      >
+                        <Button
+                          colorScheme="green"
+                          type="submit"
+                          width={"100%"}
+                          isLoading={takeMoneyFromVaultLoading}
+                        >
+                          Изтегли
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setTakeMoneyFromVaultModalOpen(false);
+                          }}
+                          colorScheme="red"
+                          width={"100%"}
+                          isDisabled={takeMoneyFromVaultLoading}
                         >
                           Откажи
                         </Button>
