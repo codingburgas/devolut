@@ -1,9 +1,6 @@
 package com.dimitar.devolut.service;
 
-import com.dimitar.devolut.model.Transaction;
-import com.dimitar.devolut.model.User;
-import com.dimitar.devolut.model.Vault;
-import com.dimitar.devolut.model.VaultUser;
+import com.dimitar.devolut.model.*;
 import com.dimitar.devolut.repository.TransactionRepository;
 import com.dimitar.devolut.repository.UserRepository;
 import com.dimitar.devolut.repository.VaultRepository;
@@ -122,6 +119,33 @@ public class VaultServiceImpl implements VaultService {
 
         vaultRepository.save(sender);
         userRepository.save(receiver);
+
+        return ResponseEntity.ok(null);
+    }
+
+    @Override
+    public ResponseEntity shareVault(VaultShare vaultShare) {
+        if (vaultShare.getdTag() != null && vaultShare.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(vaultShare.getdTag(), vaultShare.getId(), vaultShare.getPassword()) == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Vault vault = vaultRepository.findById(vaultShare.getVaultId());
+
+        if (vault == null || (vault.getOwnerId() != vaultShare.getId()) || (vault.getOwnerId() == vaultShare.getUserId()) || (!vault.getType().equals("shared"))) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        if (vault.getUsersWithAccess().contains(vaultShare.getUserId())) {
+            return new ResponseEntity<>(null, HttpStatus.FOUND);
+        }
+
+        vault.getUsersWithAccess().add(vaultShare.getUserId());
+
+        vaultRepository.save(vault);
 
         return ResponseEntity.ok(null);
     }
