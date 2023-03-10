@@ -669,7 +669,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                           Сума
                         </Text>
                         <NumberInput
-                          defaultValue={1}
+                          defaultValue={currentVault.balance < 1 ? (currentVault.balance) : (1)}
                           min={0.01}
                           max={currentVault.balance}
                           precision={2}
