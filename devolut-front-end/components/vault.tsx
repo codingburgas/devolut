@@ -107,6 +107,7 @@ export default function Vault({ session, vault, hovered, setHovered, setCurrentV
                     setCurrentVault(vault)
                     setTakeMoneyFromVaultModalOpen(true)
                   }}
+                  disabled={vault.balance == 0}
                 ></IconButton>
                 {vault.type == "shared" && vault.ownerId == session.user.id ? (
                   <IconButton
