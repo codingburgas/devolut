@@ -87,7 +87,7 @@ public class TransactionServiceImpl implements TransactionService {
                 case "vault" -> {
                     transactionView.setType("vault");
                     if (transaction.getAction().equals("withdraw")) {
-                        if (vaultRepository.findById(transaction.getReceiverId()) == null) {
+                        if (vaultRepository.findById(transaction.getSenderId()) == null) {
                             transactionView.setSenderVaultName("[ИЗТРИТ]");
                         } else {
                             transactionView.setSenderVaultName(vaultRepository.findById(transaction.getReceiverId()).getName());
