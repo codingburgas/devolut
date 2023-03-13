@@ -303,7 +303,7 @@ export default function Vaults({ session }: { session: Session | null }) {
     const interval = setInterval(async () => {
       getVaults();
       getBalance();
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);

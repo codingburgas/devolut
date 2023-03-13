@@ -89,7 +89,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
     const interval = setInterval(async () => {
       getBalance();
       getTransactions();
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
