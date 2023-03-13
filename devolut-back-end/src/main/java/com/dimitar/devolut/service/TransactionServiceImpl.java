@@ -90,7 +90,7 @@ public class TransactionServiceImpl implements TransactionService {
                         if (vaultRepository.findById(transaction.getSenderId()) == null) {
                             transactionView.setSenderVaultName("[ИЗТРИТ]");
                         } else {
-                            transactionView.setSenderVaultName(vaultRepository.findById(transaction.getReceiverId()).getName());
+                            transactionView.setSenderVaultName(vaultRepository.findById(transaction.getSenderId()).getName());
                         }
                     } else if (transaction.getAction().equals("deposit")) {
                         if (vaultRepository.findById(transaction.getReceiverId()) == null) {
