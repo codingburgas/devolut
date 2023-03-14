@@ -1,4 +1,4 @@
-import { AddIcon, LinkIcon, MinusIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, EditIcon, LinkIcon, MinusIcon } from "@chakra-ui/icons";
 import {
   Box,
   ButtonGroup,
@@ -10,7 +10,18 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-export default function Vault({ session, vault, hovered, setHovered, setCurrentVault, setAddMoneyIntoVaultModalOpen, setTakeMoneyFromVaultModalOpen, setGiveUserVaultAccessModalOpen }) {
+export default function Vault({
+  session,
+  vault,
+  hovered,
+  setHovered,
+  setCurrentVault,
+  setAddMoneyIntoVaultModalOpen,
+  setTakeMoneyFromVaultModalOpen,
+  setGiveUserVaultAccessModalOpen,
+  setEditVaultModalOpen,
+  setDeleteVaultModalOpen,
+}) {
   return (
     <>
       <Skeleton
@@ -92,8 +103,8 @@ export default function Vault({ session, vault, hovered, setHovered, setCurrentV
                   aria-label="Добави пари"
                   icon={<AddIcon />}
                   onClick={() => {
-                    setCurrentVault(vault)
-                    setAddMoneyIntoVaultModalOpen(true)
+                    setCurrentVault(vault);
+                    setAddMoneyIntoVaultModalOpen(true);
                   }}
                 ></IconButton>
                 <IconButton
@@ -104,22 +115,54 @@ export default function Vault({ session, vault, hovered, setHovered, setCurrentV
                   aria-label="Изтегли пари"
                   icon={<MinusIcon />}
                   onClick={() => {
-                    setCurrentVault(vault)
-                    setTakeMoneyFromVaultModalOpen(true)
+                    setCurrentVault(vault);
+                    setTakeMoneyFromVaultModalOpen(true);
                   }}
                   disabled={vault.balance == 0}
                 ></IconButton>
                 {vault.type == "shared" && vault.ownerId == session.user.id ? (
                   <IconButton
-                    colorScheme={"blue"}
+                    colorScheme={"green"}
                     fontSize={"md"}
                     minWidth={"8"}
                     height={"8"}
                     aria-label="Сподели сейф"
                     icon={<LinkIcon />}
                     onClick={() => {
-                      setCurrentVault(vault)
-                      setGiveUserVaultAccessModalOpen(true)
+                      setCurrentVault(vault);
+                      setGiveUserVaultAccessModalOpen(true);
+                    }}
+                  ></IconButton>
+                ) : (
+                  <></>
+                )}
+                {vault.ownerId == session.user.id ? (
+                  <IconButton
+                    colorScheme={"orange"}
+                    fontSize={"md"}
+                    minWidth={"8"}
+                    height={"8"}
+                    aria-label="Редактирай сейф"
+                    icon={<EditIcon />}
+                    onClick={() => {
+                      setCurrentVault(vault);
+                      setEditVaultModalOpen(true);
+                    }}
+                  ></IconButton>
+                ) : (
+                  <></>
+                )}
+                {vault.ownerId == session.user.id ? (
+                  <IconButton
+                    colorScheme={"red"}
+                    fontSize={"md"}
+                    minWidth={"8"}
+                    height={"8"}
+                    aria-label="Изтрий сейф"
+                    icon={<DeleteIcon />}
+                    onClick={() => {
+                      setCurrentVault(vault);
+                      setDeleteVaultModalOpen(true);
                     }}
                   ></IconButton>
                 ) : (
