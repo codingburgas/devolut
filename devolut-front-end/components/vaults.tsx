@@ -12,6 +12,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   NumberDecrementStepper,
@@ -46,6 +47,8 @@ export default function Vaults({ session }: { session: Session | null }) {
     useState(false);
   const [giveUserVaultAccessModalOpen, setGiveUserVaultAccessModalOpen] =
     useState(false);
+  const [editVaultModalOpen, setEditVaultModalOpen] = useState(false);
+  const [deleteVaultModalOpen, setDeleteVaultModalOpen] = useState(false);
   const [createVaultLoading, setCreateVaultLoading] = useState(false);
   const [addMoneyIntoVaultLoading, setAddMoneyIntoVaultLoading] =
     useState(false);
@@ -53,6 +56,8 @@ export default function Vaults({ session }: { session: Session | null }) {
     useState(false);
   const [giveUserVaultAccessLoading, setGiveUserVaultAccessLoading] =
     useState(false);
+  const [editVaultLoading, setEditVaultLoading] = useState(false);
+  const [deleteVaultLoading, setDeleteVaultLoading] = useState(false);
   const [hovered, setHovered] = useState("");
   const toast = useToast();
 
@@ -299,6 +304,77 @@ export default function Vaults({ session }: { session: Session | null }) {
       });
   };
 
+  const handleVaultEdit = async (e: any) => {
+    e.preventDefault();
+
+    setEditVaultLoading(true);
+
+    setTimeout(async () => {
+      const res = await fetch(process.env.BACKEND_URL + "/vault/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vaultId: currentVault.id,
+          goal: e.target.goal.value,
+          name: e.target.name.value,
+          type: e.target.type.value,
+          id: session?.user.id,
+          dTag: session?.user.dTag,
+          password: session?.user.password,
+        }),
+      });
+
+      if (res.ok && res.status == 200) {
+        setEditVaultModalOpen(false);
+        setEditVaultLoading(false);
+        getVaults();
+      } else if (res.status == 404) {
+        setEditVaultModalOpen(false);
+        setEditVaultLoading(false);
+        toast({
+          title: "Нещо се обърка!",
+          status: "error",
+          variant: "left-accent",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
+  }
+
+  const handleVaultDelete = async () => {
+    setDeleteVaultLoading(true);
+
+    setTimeout(async () => {
+      const res = await fetch(process.env.BACKEND_URL + "/vault/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vaultId: currentVault.id,
+          id: session?.user.id,
+          dTag: session?.user.dTag,
+          password: session?.user.password,
+        }),
+      });
+
+      if (res.ok && res.status == 200) {
+        setDeleteVaultModalOpen(false);
+        setDeleteVaultLoading(false);
+        getVaults();
+      } else if (res.status == 404) {
+        setDeleteVaultModalOpen(false);
+        setDeleteVaultLoading(false);
+        toast({
+          title: "Нещо се обърка!",
+          status: "error",
+          variant: "left-accent",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
+  };
+
   useEffect(() => {
     const interval = setInterval(async () => {
       getVaults();
@@ -414,6 +490,8 @@ export default function Vaults({ session }: { session: Session | null }) {
                       setGiveUserVaultAccessModalOpen={
                         setGiveUserVaultAccessModalOpen
                       }
+                      setEditVaultModalOpen={setEditVaultModalOpen}
+                      setDeleteVaultModalOpen={setDeleteVaultModalOpen}
                     />
                   ));
                 }
@@ -669,7 +747,9 @@ export default function Vaults({ session }: { session: Session | null }) {
                           Сума
                         </Text>
                         <NumberInput
-                          defaultValue={currentVault.balance < 1 ? (currentVault.balance) : (1)}
+                          defaultValue={
+                            currentVault.balance < 1 ? currentVault.balance : 1
+                          }
                           min={0.01}
                           max={currentVault.balance}
                           precision={2}
@@ -786,6 +866,165 @@ export default function Vaults({ session }: { session: Session | null }) {
                     </Flex>
                   </form>
                 </ModalBody>
+              </ModalContent>
+            </Modal>
+
+            <Modal
+              onClose={() => {
+                setEditVaultModalOpen(false);
+              }}
+              isOpen={editVaultModalOpen}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Редактиране на сейф</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <form onSubmit={handleVaultEdit}>
+                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Тип на сейфа
+                        </Text>
+                        <Select
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="type"
+                          required
+                        >
+                          <option selected={currentVault.type == "personal"} value="personal">Личен</option>
+                          <option selected={currentVault.type == "shared"} value="shared">Споделен</option>
+                        </Select>
+                      </Flex>
+
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Име
+                        </Text>
+                        <Input
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="name"
+                          placeholder="Спестявания"
+                          defaultValue={currentVault.name}
+                          required
+                          disabled={editVaultLoading}
+                        ></Input>
+                      </Flex>
+
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Цел (Остави празно ако няма)
+                        </Text>
+                        <NumberInput
+                          min={0.01}
+                          precision={2}
+                          size="md"
+                          marginBottom={"2"}
+                          width={"100%"}
+                          name="goal"
+                          defaultValue={currentVault.goal}
+                          isDisabled={editVaultLoading}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      </Flex>
+
+                      <Flex
+                        justify="space-between"
+                        wrap="nowrap"
+                        mb="3"
+                        mt="4"
+                        gap={"2"}
+                      >
+                        <Button
+                          colorScheme="green"
+                          type="submit"
+                          width={"100%"}
+                          isLoading={editVaultLoading}
+                        >
+                          Редактирай
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setEditVaultModalOpen(false);
+                          }}
+                          colorScheme="red"
+                          width={"100%"}
+                          isDisabled={editVaultLoading}
+                        >
+                          Откажи
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </form>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+
+            <Modal
+              onClose={() => {
+                setDeleteVaultModalOpen(false);
+              }}
+              isOpen={deleteVaultModalOpen}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Изтрийте сейф</ModalHeader>
+                <ModalBody>
+                  Наистина ли искате да изтриете сейф{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    {currentVault.name}
+                  </span>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    onClick={() => {
+                      setDeleteVaultModalOpen(false);
+                    }}
+                    isDisabled={deleteVaultLoading}
+                  >
+                    Откажи
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    ml={3}
+                    onClick={handleVaultDelete}
+                    isLoading={deleteVaultLoading}
+                  >
+                    Изтрий
+                  </Button>
+                </ModalFooter>
               </ModalContent>
             </Modal>
           </Box>
