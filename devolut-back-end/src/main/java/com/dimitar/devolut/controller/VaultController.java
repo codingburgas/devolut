@@ -1,9 +1,6 @@
 package com.dimitar.devolut.controller;
 
-import com.dimitar.devolut.model.User;
-import com.dimitar.devolut.model.Vault;
-import com.dimitar.devolut.model.VaultShare;
-import com.dimitar.devolut.model.VaultUser;
+import com.dimitar.devolut.model.*;
 import com.dimitar.devolut.service.VaultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,4 +29,10 @@ public class VaultController {
 
     @PostMapping("/share")
     public ResponseEntity shareVault(@RequestBody VaultShare vaultShare) { return vaultService.shareVault(vaultShare); }
+
+    @PostMapping("/delete")
+    public ResponseEntity deleteVault(@RequestBody VaultDelete vaultDelete) { return vaultService.deleteVault(vaultDelete); }
+
+    @PostMapping("/update")
+    public ResponseEntity updateVault(@RequestBody VaultUpdate vaultUpdate) { return vaultService.updateVault(vaultUpdate); }
 }
