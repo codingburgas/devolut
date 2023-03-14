@@ -111,9 +111,9 @@ export default function Transaction({
               return <>+{transaction.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} лв</>
             } else if (transaction.type == "vault") {
               if (transaction.receiverVaultName) {
-                return <>+{transaction.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} лв</>
-              } else {
                 return <>-{transaction.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} лв</>
+              } else {
+                return <>+{transaction.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} лв</>
               }
             }
           })()}
