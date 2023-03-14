@@ -153,4 +153,79 @@ public class VaultServiceImpl implements VaultService {
 
         return ResponseEntity.ok(null);
     }
+
+    @Override
+    public ResponseEntity deleteVault(VaultDelete vaultDelete) {
+        if (vaultDelete.getdTag() != null && vaultDelete.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(vaultDelete.getdTag(), vaultDelete.getId(), vaultDelete.getPassword()) == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        User user = userRepository.findBydTagAndIdAndPassword(vaultDelete.getdTag(), vaultDelete.getId(), vaultDelete.getPassword());
+        Vault vault = vaultRepository.findById(vaultDelete.getVaultId());
+
+        if (vault == null || vault.getOwnerId() != vaultDelete.getId()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        if (vault.getBalance() > 0) {
+            Transaction transaction = new Transaction();
+            transaction.setSenderId(vaultDelete.getVaultId());
+            transaction.setReceiverId(vaultDelete.getId());
+            transaction.setAmount(vault.getBalance());
+            transaction.setAction("withdraw");
+            transaction.setType("vault");
+            transactionRepository.save(transaction);
+
+            user.setBalance(user.getBalance() + vault.getBalance());
+            userRepository.save(user);
+        }
+
+        vaultRepository.delete(vault);
+
+        return ResponseEntity.ok(null);
+    }
+
+    @Override
+    public ResponseEntity updateVault(VaultUpdate vaultUpdate) {
+        if (vaultUpdate.getdTag() != null && vaultUpdate.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(vaultUpdate.getdTag(), vaultUpdate.getId(), vaultUpdate.getPassword()) == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Vault vault = vaultRepository.findById(vaultUpdate.getVaultId());
+
+        if (vault == null || vault.getOwnerId() != vaultUpdate.getId()) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        if (vaultUpdate.getName() == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } else {
+            vault.setName(vaultUpdate.getName());
+        }
+
+        if (vaultUpdate.getGoal() != null) {
+            vault.setGoal(vaultUpdate.getGoal());
+        } else {
+            vault.setGoal(null);
+        }
+
+        if (vault.getType().equals("shared") && vaultUpdate.getType().equals("personal")) {
+            vault.setUsersWithAccess(null);
+            vault.setType("personal");
+        } else if (vault.getType().equals("personal") && vaultUpdate.getType().equals("shared")) {
+            vault.setType("shared");
+        }
+
+        vaultRepository.save(vault);
+
+        return ResponseEntity.ok(null);
+    }
 }
