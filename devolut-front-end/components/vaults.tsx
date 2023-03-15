@@ -58,7 +58,7 @@ export default function Vaults({ session }: { session: Session | null }) {
     useState(false);
   const [editVaultLoading, setEditVaultLoading] = useState(false);
   const [deleteVaultLoading, setDeleteVaultLoading] = useState(false);
-  const [hovered, setHovered] = useState("");
+  const [hovered, setHovered] = useState(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -1005,7 +1005,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                   Наистина ли искате да изтриете сейф{" "}
                   <span style={{ fontWeight: "bold" }}>
                     {currentVault.name}
-                  </span>
+                  </span>?
                 </ModalBody>
                 <ModalFooter>
                   <Button
