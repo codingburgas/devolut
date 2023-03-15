@@ -19,7 +19,7 @@ public class VaultController {
     public ResponseEntity createVault(@RequestBody Vault vault) { return vaultService.createVault(vault); }
 
     @PostMapping("/user")
-    public ResponseEntity<List<Vault>> getUserVaults(@RequestBody User user) { return vaultService.getUserVaults(user); }
+    public ResponseEntity<List<VaultView>> getUserVaults(@RequestBody User user) { return vaultService.getUserVaults(user); }
 
     @PostMapping("/deposit")
     public ResponseEntity depositMoney(@RequestBody VaultUser vaultUser) { return vaultService.depositMoney(vaultUser); }

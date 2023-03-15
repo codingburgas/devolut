@@ -8,7 +8,7 @@ import java.util.List;
 public interface VaultService {
     public ResponseEntity createVault(Vault vault);
 
-    public ResponseEntity<List<Vault>> getUserVaults(User user);
+    public ResponseEntity<List<VaultView>> getUserVaults(User user);
 
     public ResponseEntity depositMoney(VaultUser vaultUser);
 
