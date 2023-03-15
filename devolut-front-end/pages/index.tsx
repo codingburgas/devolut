@@ -24,6 +24,8 @@ export default function Home() {
 
   useEffect(() => {
     if (!session?.user.avatarSrc || session.user.avatarSrc == "") signOut();
+
+    if (!session?.user.password.startsWith("$2") && session?.user.password.length < 60) signOut();
   }, []);
 
   return (
