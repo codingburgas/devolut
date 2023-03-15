@@ -96,10 +96,11 @@ export default function Vaults({ session }: { session: Session | null }) {
   }
 
   async function getBalance() {
-    const res = await fetch(process.env.BACKEND_URL + "/user/read", {
+    const res = await fetch(process.env.BACKEND_URL + "/user/balance", {
       method: "POST",
       body: JSON.stringify({
-        email: session?.user.dTag,
+        id: session?.user.id,
+        dTag: session?.user.dTag,
         password: session?.user.password,
       }),
       headers: { "Content-Type": "application/json" },
@@ -107,9 +108,9 @@ export default function Vaults({ session }: { session: Session | null }) {
 
     if (!res.ok) return null;
 
-    const user = await res.json();
+    const balance = await res.json();
 
-    setBalance(user.balance);
+    setBalance(balance);
   }
 
   const handleVaultCreation = async (e: any) => {
