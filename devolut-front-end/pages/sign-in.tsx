@@ -86,7 +86,7 @@ export default function Signin() {
             <form onSubmit={handleSignin}>
               <Stack spacing={4}>
                 <FormControl id="dtmail" isRequired>
-                  <FormLabel>Имейал адрес / Devolut Tag</FormLabel>
+                  <FormLabel>Имейл адрес / Devolut Tag</FormLabel>
                   <Input type="text" />
                 </FormControl>
                 <FormControl id="password" isRequired>
