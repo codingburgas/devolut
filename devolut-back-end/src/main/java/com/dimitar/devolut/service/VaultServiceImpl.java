@@ -33,7 +33,7 @@ public class VaultServiceImpl implements VaultService {
     }
 
     @Override
-    public ResponseEntity<List<Vault>> getUserVaults(User user) {
+    public ResponseEntity<List<VaultView>> getUserVaults(User user) {
         if (user.getdTag() != null && user.getPassword() != null) {
             if (userRepository.findBydTagAndIdAndPassword(user.getdTag(), user.getId(), user.getPassword()) == null) {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -42,11 +42,22 @@ public class VaultServiceImpl implements VaultService {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
-        List<Vault> vaults = new ArrayList<>();
+        List<VaultView> vaults = new ArrayList<>();
 
         vaultRepository.findAll().forEach((vault -> {
             if ((vault.getOwnerId() == user.getId()) || vault.getUsersWithAccess().contains(user.getId())) {
-                vaults.add(vault);
+                VaultView vaultView = new VaultView();
+
+                vaultView.setId(vault.getId());
+                vaultView.setOwnerId(vault.getOwnerId());
+                vaultView.setOwnerDTag(userRepository.findById(vault.getOwnerId()).getdTag());
+                vaultView.setBalance(vault.getBalance());
+                vaultView.setGoal(vault.getGoal());
+                vaultView.setName(vault.getName());
+                vaultView.setType(vault.getType());
+                vaultView.setUsersWithAccess(vault.getUsersWithAccess());
+
+                vaults.add(vaultView);
             }
         }));
 
