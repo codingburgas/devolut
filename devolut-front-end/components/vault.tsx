@@ -8,6 +8,7 @@ import {
   ScaleFade,
   Skeleton,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";
 
 export default function Vault({
@@ -28,8 +29,8 @@ export default function Vault({
         isLoaded={true}
         key={vault.id}
         borderRadius={"md"}
-        onMouseEnter={() => setHovered(vault.name)}
-        onMouseLeave={() => setHovered("")}
+        onMouseEnter={() => setHovered(vault.id)}
+        onMouseLeave={() => setHovered(null)}
       >
         <Box
           display={"flex"}
@@ -44,9 +45,10 @@ export default function Vault({
             direction={"column"}
             justifyContent={"space-between"}
             h="full"
-            w="20%"
+            w="auto"
           >
-            <Text>
+            <Text display={"flex"} alignItems={"center"}>
+              {vault.ownerId != session.user.id ? (<Tooltip label={vault.ownerDTag} placement={"auto"} hasArrow><LinkIcon w={6} h={6} boxSize={4} marginRight={1}/></Tooltip>) : (<></>)}
               {vault.name}{" "}
               {vault.goal ? (
                 <>
@@ -84,9 +86,9 @@ export default function Vault({
 
           <ScaleFade
             key={vault.id}
-            id={vault.name}
+            id={vault.id}
             initialScale={0.9}
-            in={hovered === vault.name ? true : false}
+            in={hovered === vault.id ? true : false}
           >
             <Box
               background={"blackAlpha.700"}
