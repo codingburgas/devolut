@@ -18,10 +18,13 @@ public class UserController {
         return userService.createUser(user);
     }
 
-    @PostMapping("/read")
+    @PostMapping("/auth")
     public ResponseEntity<User> signIn(@RequestBody User user) {
         return userService.signIn(user);
     }
+
+    @PostMapping("/balance")
+    public ResponseEntity<Double> getUserBalance(@RequestBody User user) { return userService.getUserBalance(user); }
 
     @PostMapping("/getIdByDTag")
     public ResponseEntity<Integer> getIdByDTag(@RequestBody String dTag) { return userService.getIdByDTag(dTag); }
