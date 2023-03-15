@@ -8,5 +8,7 @@ public interface UserService {
 
     public ResponseEntity<User> signIn(User user);
 
+    public ResponseEntity<Double> getUserBalance(User user);
+
     public ResponseEntity<Integer> getIdByDTag(String dTag);
 }
