@@ -32,15 +32,11 @@ export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
 
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
   },
 
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
-  },
-
-  pages: {
-
   },
 
   callbacks: {
@@ -54,8 +50,6 @@ export default NextAuth({
         return token
     }
   },
-
-  events: {},
 
   debug: false,
 })
