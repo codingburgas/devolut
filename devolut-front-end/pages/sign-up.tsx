@@ -181,9 +181,9 @@ export default function Signup() {
                   <Input type="text" maxLength={10} />
                 </FormControl>
                 <Box display={"flex"} alignItems={"end"} gap={"4"}>
-                  <FormControl id="avatar" isRequired>
+                  <FormControl isRequired>
                     <FormLabel>Снимка на акаунта</FormLabel>
-                    <input type="file" onChange={handleFileInputChange} />
+                    <input id="avatar" type="file" onChange={handleFileInputChange} />
                   </FormControl>
 
                   <Avatar src={imageUrl}/>
