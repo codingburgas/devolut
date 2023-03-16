@@ -11,7 +11,7 @@ const handler = nextConnect();
 
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "avatars");
+    cb(null, process.env.AVATARS_PATH);
   },
   filename: function (req, file, cb) {
     cb(

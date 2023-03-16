@@ -38,4 +38,6 @@ next-env.d.ts
 
 server.js
 
+/public/avatars
+
 /avatars

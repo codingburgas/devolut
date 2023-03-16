@@ -7,6 +7,7 @@ const nextConfig = {
   },
   env:{
     BACKEND_URL : process.env.BACKEND_URL,
+    AVATARS_PATH: process.env.AVATARS_PATH
   }
 }
 
