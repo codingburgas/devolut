@@ -33,14 +33,14 @@ export default function Transaction({
             if (transaction.type == "user") {
               if (transaction.senderDTag == session.user.dTag) {
                 return <Box display={"flex"} alignItems={"flex-end"}>
-                  <Avatar src={transaction.receiverAvatarSrc} name={transaction.receiverDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} marginRight={"-4"} />
+                  <Avatar src={'avatars/' + transaction.receiverAvatarSrc} name={transaction.receiverDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} marginRight={"-4"} />
                   <Box backgroundColor={"blue.300"} border='2px' borderColor={'black'} zIndex={"3"} w={"5"} h={"5"} borderRadius={"xl"} display={"flex"} alignItems={'center'} alignContent={'center'} justifyContent={'center'} justifyItems={'center'}>
                     <ArrowForwardIcon color={"black"} />
                   </Box>
                 </Box>
               } else {
                 return <Box display={"flex"} alignItems={"flex-end"}>
-                  <Avatar src={transaction.senderAvatarSrc} name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} marginRight={"-4"} />
+                  <Avatar src={'avatars/' + transaction.senderAvatarSrc} name={transaction.senderDTag} borderWidth={"2px"} borderColor={"whiteAlpha.50"} marginRight={"-4"} />
                   <Box backgroundColor={"blue.300"} border='2px' borderColor={'black'} zIndex={"3"} w={"5"} h={"5"} borderRadius={"xl"} display={"flex"} alignItems={'center'} alignContent={'center'} justifyContent={'center'} justifyItems={'center'}>
                     <ArrowBackIcon color={"black"} />
                   </Box>

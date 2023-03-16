@@ -22,6 +22,7 @@ import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { IncomingMessage } from "http";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +37,23 @@ export default function Signup() {
     setSignUpLoading(true);
 
     setTimeout(async () => {
+      const userImageUID = uuidv4();
+
+      const formData = new FormData();
+      const filename = userImageUID;
+      const fileExtension = e.target.avatar.files[0].name.split('.').pop();
+      const uniqueFilename = `${filename}.${fileExtension}`;
+      const finalImage = new File([e.target.avatar.files[0]], uniqueFilename, {
+        type: `image/${fileExtension}`,
+        lastModified: Date.now()
+      });
+      formData.append('file', finalImage);
+    
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
       const user = {
         dTag: e.target.dTag.value,
         email: e.target.email.value,
@@ -50,7 +68,7 @@ export default function Signup() {
         city: e.target.city.value,
         region: e.target.region.value,
         phoneNumber: e.target.phoneNumber.value,
-        avatarSrc: e.target.avatarSrc.value
+        avatarSrc: uniqueFilename
       };
 
       const res = await fetch(process.env.BACKEND_URL + "/user/create", {
@@ -59,7 +77,7 @@ export default function Signup() {
         body: JSON.stringify(user),
       });
 
-      if (res.ok && res.status == 200 && await res.json()) {
+      if (res.ok && res.status == 200 && (await res.json())) {
         toast.closeAll();
 
         const status = await signIn("credentials", {
@@ -70,7 +88,7 @@ export default function Signup() {
         });
 
         if (status?.ok) router.push(status?.url);
-      } else if(res.status == 226) {
+      } else if (res.status == 226) {
         setSignUpLoading(false);
         toast({
           title: "Потребител с такъв Devolut Tag вече съществута!",
@@ -98,9 +116,12 @@ export default function Signup() {
           isClosable: true,
         });
       }
-      
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
+
+  function handleFileInputChange(event) {
+    setImageUrl(URL.createObjectURL(event.target.files[0]));
+  }
 
   return (
     <>
@@ -119,8 +140,8 @@ export default function Signup() {
               Регистрирайте се
             </Heading>
             <Text fontSize={"lg"} color={"gray.400"}>
-              за да се насладите на всички <Link color={"blue.400"}>възможност</Link>{" "}
-              ✌️
+              за да се насладите на всички{" "}
+              <Link color={"blue.400"}>възможност</Link> ✌️
             </Text>
           </Stack>
           <Box
@@ -160,12 +181,12 @@ export default function Signup() {
                   <Input type="text" maxLength={10} />
                 </FormControl>
                 <Box display={"flex"} alignItems={"end"} gap={"4"}>
-                  <FormControl id="avatarSrc" isRequired>
+                  <FormControl id="avatar" isRequired>
                     <FormLabel>Снимка на акаунта</FormLabel>
-                    <Input type="url" onChange={(e) => (setImageUrl(e.target.value))}/>
+                    <input type="file" onChange={handleFileInputChange} />
                   </FormControl>
 
-                  <Avatar src={imageUrl} />
+                  <Avatar src={imageUrl}/>
                 </Box>
                 <FormControl id="password" isRequired>
                   <FormLabel>Парола</FormLabel>
@@ -262,7 +283,7 @@ export default function Signup() {
   );
 }
 
-export async function getServerSideProps({ req }: {req: IncomingMessage}) {
+export async function getServerSideProps({ req }: { req: IncomingMessage }) {
   const session = await getSession({ req });
 
   if (session) {

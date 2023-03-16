@@ -30,7 +30,6 @@ const Header = ({ session, router, signOut }: {session: Session | null, router: 
     </Icon>
   );
 
-
   return (
     <Flex
       alignItems={'center'}
@@ -55,7 +54,7 @@ const Header = ({ session, router, signOut }: {session: Session | null, router: 
 
       <Menu colorScheme={'gray'} placement={'bottom-end'}>
         <MenuButton>
-          <Avatar src={session?.user.avatarSrc} borderColor={'whiteAlpha.50'}>
+          <Avatar src={'avatars/' + session?.user.avatarSrc} borderColor={'whiteAlpha.50'}>
             <AvatarBadge boxSize="20px" bg="green.400" borderColor={'#111'} />
           </Avatar>
         </MenuButton>
