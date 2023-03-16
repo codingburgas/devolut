@@ -28,6 +28,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Session } from "next-auth";
+import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Balance from "./number";
 import Transaction from "./transaction";
@@ -65,7 +66,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
       headers: { "Content-Type": "application/json" },
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) return signOut();
 
     const balance = await res.json();
 
@@ -83,7 +84,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
       headers: { "Content-Type": "application/json" },
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) return signOut();
 
     const result = await res.json();
 
