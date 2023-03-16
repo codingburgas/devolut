@@ -22,11 +22,11 @@ export default function Home() {
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
 
-  useEffect(() => {
-    if (!session?.user.avatarSrc || session.user.avatarSrc == "") signOut();
+  // useEffect(() => {
+  //   if (!session?.user.avatarSrc || session.user.avatarSrc == "") signOut();
 
-    if (!session?.user.password.startsWith("$2") && session?.user.password.length < 60) signOut();
-  }, []);
+  //   if (!session?.user.password.startsWith("$2") && session?.user.password.length < 60) signOut();
+  // }, []);
 
   return (
     <>
