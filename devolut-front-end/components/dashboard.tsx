@@ -31,6 +31,7 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Balance from "./number";
+import Pagination from "./pagination";
 import Transaction from "./transaction";
 
 export default function Dashboard({ session }: { session: Session | null }) {
@@ -42,6 +43,13 @@ export default function Dashboard({ session }: { session: Session | null }) {
   const [sendMoneyLoading, setSendMoneyLoading] = useState(false);
   const [addMoneyLoading, setAddMoneyLoading] = useState(false);
   const toast = useToast();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(transactions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = transactions.slice(startIndex, endIndex);
 
   const [cardNumber, setCardNumber] = useState("");
   const [cvv, setCvv] = useState("");
@@ -71,6 +79,10 @@ export default function Dashboard({ session }: { session: Session | null }) {
     const balance = await res.json();
 
     setBalance(balance);
+  }
+
+  function handlePageChange(pageNumber) {
+    setCurrentPage(pageNumber);
   }
 
   async function getTransactions() {
@@ -326,13 +338,26 @@ export default function Dashboard({ session }: { session: Session | null }) {
                     </Alert>
                   );
                 } else {
-                  return transactions.map((transaction, index) => (
-                    <Transaction
-                      key={index}
-                      transaction={transaction}
-                      session={session}
-                    />
-                  ));
+                  return (
+                    <>
+                      {currentItems.map((item, index) => (
+                        <Transaction
+                          key={index}
+                          transaction={item}
+                          session={session}
+                        />
+                      ))}
+                      {totalPages > 1 ? (
+                        <Pagination
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          onPageChange={handlePageChange}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </>
+                  );
                 }
               })()}
             </Box>
