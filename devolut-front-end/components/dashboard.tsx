@@ -100,10 +100,40 @@ export default function Dashboard({ session }: { session: Session | null }) {
     return () => clearInterval(interval);
   }, []);
 
+  const handleAloDa = (e) => {
+    let input = e.target.value;
+    input = input.replace(/\D/g, "");
+    input = input.substring(0, 4);
+    let month = input.substring(0, 2);
+    let year = input.substring(2);
+    if (parseInt(month) > 12) {
+      month = "12";
+    }
+    if (input.length > 1) input = `${month}/${year}`;
+
+    setExpiry(input);
+  };
+
   const handleSubmitAddMoney = async (e: any) => {
     e.preventDefault();
 
     setAddMoneyLoading(true);
+
+    if (
+      Number("20" + expiry.substring(3)) < new Date().getFullYear() ||
+      (Number(expiry.substring(0, 2)) < new Date().getMonth() + 1 &&
+        Number("20" + expiry.substring(3)) == new Date().getFullYear())
+    ) {
+      setAddMoneyLoading(false);
+
+      return toast({
+        title: "Картата, която се опитвате да използвате, е изтекла!",
+        status: "error",
+        variant: "left-accent",
+        position: "bottom-right",
+        isClosable: true,
+      });
+    }
 
     setTimeout(async () => {
       const res = await fetch(process.env.BACKEND_URL + "/transaction/card", {
@@ -286,7 +316,11 @@ export default function Dashboard({ session }: { session: Session | null }) {
               {(() => {
                 if (transactions.length == 0) {
                   return (
-                    <Alert status="info" borderRadius={"md"} fontWeight={"semibold"}>
+                    <Alert
+                      status="info"
+                      borderRadius={"md"}
+                      fontWeight={"semibold"}
+                    >
                       <AlertIcon />
                       Нямате трансакции към този момент!
                     </Alert>
@@ -398,19 +432,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
                             Валидност на картата
                           </Text>
                           <Input
-                            onChange={(e) => {
-                              let input = e.target.value;
-                              input = input.replace(/\D/g, "");
-                              input = input.substring(0, 4);
-                              let month = input.substring(0, 2);
-                              let year = input.substring(2);
-                              if (parseInt(month) > 12) {
-                                month = "12";
-                              }
-                              if (input.length > 1) input = `${month}/${year}`;
-
-                              setExpiry(input);
-                            }}
+                            onChange={handleAloDa}
                             width={"100%"}
                             height={"12"}
                             marginBottom={"2"}
