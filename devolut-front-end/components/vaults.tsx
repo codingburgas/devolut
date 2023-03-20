@@ -33,6 +33,7 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Balance from "./number";
+import Pagination from "./pagination";
 import Vault from "./vault";
 
 export default function Vaults({ session }: { session: Session | null }) {
@@ -61,6 +62,17 @@ export default function Vaults({ session }: { session: Session | null }) {
   const [deleteVaultLoading, setDeleteVaultLoading] = useState(false);
   const [hovered, setHovered] = useState(null);
   const toast = useToast();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(vaults.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = vaults.slice(startIndex, endIndex);
+
+  function handlePageChange(pageNumber) {
+    setCurrentPage(pageNumber);
+  }
 
   useEffect(() => {
     getVaults();
@@ -342,7 +354,7 @@ export default function Vaults({ session }: { session: Session | null }) {
         });
       }
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
-  }
+  };
 
   const handleVaultDelete = async () => {
     setDeleteVaultLoading(true);
@@ -475,27 +487,40 @@ export default function Vaults({ session }: { session: Session | null }) {
                     </Alert>
                   );
                 } else {
-                  return vaults.map((vault, index) => (
-                    <Vault
-                      key={vault.id}
-                      session={session}
-                      vault={vault}
-                      hovered={hovered}
-                      setHovered={setHovered}
-                      setCurrentVault={setCurrentVault}
-                      setAddMoneyIntoVaultModalOpen={
-                        setAddMoneyIntoVaultModalOpen
-                      }
-                      setTakeMoneyFromVaultModalOpen={
-                        setTakeMoneyFromVaultModalOpen
-                      }
-                      setGiveUserVaultAccessModalOpen={
-                        setGiveUserVaultAccessModalOpen
-                      }
-                      setEditVaultModalOpen={setEditVaultModalOpen}
-                      setDeleteVaultModalOpen={setDeleteVaultModalOpen}
-                    />
-                  ));
+                  return (
+                    <>
+                      {currentItems.map((item, index) => (
+                        <Vault
+                          key={item.id}
+                          session={session}
+                          vault={item}
+                          hovered={hovered}
+                          setHovered={setHovered}
+                          setCurrentVault={setCurrentVault}
+                          setAddMoneyIntoVaultModalOpen={
+                            setAddMoneyIntoVaultModalOpen
+                          }
+                          setTakeMoneyFromVaultModalOpen={
+                            setTakeMoneyFromVaultModalOpen
+                          }
+                          setGiveUserVaultAccessModalOpen={
+                            setGiveUserVaultAccessModalOpen
+                          }
+                          setEditVaultModalOpen={setEditVaultModalOpen}
+                          setDeleteVaultModalOpen={setDeleteVaultModalOpen}
+                        />
+                      ))}
+                      {totalPages > 1 ? (
+                        <Pagination
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          onPageChange={handlePageChange}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </>
+                  );
                 }
               })()}
             </Box>
@@ -905,8 +930,18 @@ export default function Vaults({ session }: { session: Session | null }) {
                           name="type"
                           required
                         >
-                          <option selected={currentVault.type == "personal"} value="personal">Личен</option>
-                          <option selected={currentVault.type == "shared"} value="shared">Споделен</option>
+                          <option
+                            selected={currentVault.type == "personal"}
+                            value="personal"
+                          >
+                            Личен
+                          </option>
+                          <option
+                            selected={currentVault.type == "shared"}
+                            value="shared"
+                          >
+                            Споделен
+                          </option>
                         </Select>
                       </Flex>
 
@@ -1007,7 +1042,8 @@ export default function Vaults({ session }: { session: Session | null }) {
                   Наистина ли искате да изтриете сейф{" "}
                   <span style={{ fontWeight: "bold" }}>
                     {currentVault.name}
-                  </span>?
+                  </span>
+                  ?
                 </ModalBody>
                 <ModalFooter>
                   <Button
