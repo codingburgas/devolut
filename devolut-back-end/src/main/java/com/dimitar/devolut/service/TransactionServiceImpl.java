@@ -108,7 +108,7 @@ public class TransactionServiceImpl implements TransactionService {
             transactionViews.add(transactionView);
         }));
 
-        return ResponseEntity.ok(transactionViews.subList(Math.max(transactionViews.size() - 4, 0), transactionViews.size()));
+        return ResponseEntity.ok(transactionViews);
     }
 
     @Override
