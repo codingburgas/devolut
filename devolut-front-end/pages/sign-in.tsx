@@ -72,9 +72,14 @@ export default function Signin() {
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
           <Stack align={"center"}>
             <Heading fontSize={"4xl"}>Влезте в акаунта си</Heading>
-            <Text fontSize={"lg"} color={"gray.400"} display="flex" gap={"1"}>
-              за да се насладите на всички <Text color={"blue.400"}>възможности✌️</Text>
-            </Text>
+            <Flex direction={"row"} alignItems={"center"} gap={"1"}>
+              <Text fontSize={"lg"} color={"gray.400"}>
+                за да се насладите на всички
+              </Text>
+              <Text fontSize={"lg"} color={"blue.400"}>
+                възможности✌️
+              </Text>
+            </Flex>
           </Stack>
           <Box
             rounded={"lg"}
@@ -117,7 +122,12 @@ export default function Signin() {
               </Stack>
             </form>
             <Stack pt={6}>
-              <Text align={"center"}>{"Нямате акаунт?"} <Link href="/sign-up" color={"blue.400"}>Регистрирайте се</Link></Text>
+              <Text align={"center"}>
+                {"Нямате акаунт?"}{" "}
+                <Link href="/sign-up" color={"blue.400"}>
+                  Регистрирайте се
+                </Link>
+              </Text>
             </Stack>
           </Box>
         </Stack>
@@ -126,7 +136,7 @@ export default function Signin() {
   );
 }
 
-export async function getServerSideProps({ req }: {req: IncomingMessage}) {
+export async function getServerSideProps({ req }: { req: IncomingMessage }) {
   const session = await getSession({ req });
 
   if (session) {
