@@ -72,9 +72,8 @@ export default function Signin() {
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
           <Stack align={"center"}>
             <Heading fontSize={"4xl"}>Влезте в акаунта си</Heading>
-            <Text fontSize={"lg"} color={"gray.400"}>
-              за да се насладите на всички <Link color={"blue.400"}>възможности</Link>
-              ✌️
+            <Text fontSize={"lg"} color={"gray.400"} display="flex" gap={"1"}>
+              за да се насладите на всички <Text color={"blue.400"}>възможности✌️</Text>
             </Text>
           </Stack>
           <Box
