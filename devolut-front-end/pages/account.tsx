@@ -141,7 +141,7 @@ export default function Account() {
                   <FormControl id="phoneNumber">
                     <FormLabel>Телефонен номер</FormLabel>
                     <Input
-                      type="number"
+                      type="text"
                       backgroundColor={"gray.700"}
                       fontWeight={"semibold"}
                       value={session?.user.phoneNumber}
