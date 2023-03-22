@@ -38,7 +38,7 @@ export default function Vault({
           alignItems={"center"}
           padding={"2"}
           height={"75px"}
-          backgroundColor={"gray.600"}
+          backgroundColor={"vault.100"}
           borderRadius={"md"}
         >
           <Flex
