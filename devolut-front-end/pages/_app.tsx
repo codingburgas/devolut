@@ -11,6 +11,9 @@ const theme = extendTheme({
     gray: {
       700: "#222",
       800: "#111"
+    },
+    vault: {
+      100: "#333"
     }
   }
 });
