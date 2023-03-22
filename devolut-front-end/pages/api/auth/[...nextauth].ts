@@ -33,6 +33,8 @@ export default NextAuth({
 
   session: {
     strategy: 'jwt',
+
+    maxAge: 1 * 24 * 60 * 60
   },
 
   jwt: {
