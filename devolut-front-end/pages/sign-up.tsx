@@ -15,6 +15,7 @@ import {
   Link,
   useToast,
   Avatar,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -62,12 +63,12 @@ export default function Signup() {
         middleName: e.target.middleName.value,
         lastName: e.target.lastName.value,
         dateOfBirth: e.target.dateOfBirth.value,
-        country: e.target.country.value,
+        country: "България",
         address: e.target.address.value,
         postCode: e.target.postCode.value,
         city: e.target.city.value,
         region: e.target.region.value,
-        phoneNumber: e.target.phoneNumber.value,
+        phoneNumber: '+359' + e.target.phoneNumber.value,
         avatarSrc: uniqueFilename
       };
 
@@ -156,19 +157,19 @@ export default function Signup() {
                   <Box>
                     <FormControl id="firstName" isRequired>
                       <FormLabel>Име</FormLabel>
-                      <Input type="text" />
+                      <Input pattern="[А-Яа-яЁё\s]+" type="text" />
                     </FormControl>
                   </Box>
                   <Box>
                     <FormControl id="middleName" isRequired>
                       <FormLabel>Презиме</FormLabel>
-                      <Input type="text" />
+                      <Input pattern="[А-Яа-яЁё\s]+" type="text" />
                     </FormControl>
                   </Box>
                   <Box>
                     <FormControl id="lastName" isRequired>
                       <FormLabel>Фамилия</FormLabel>
-                      <Input type="text" />
+                      <Input pattern="[А-Яа-яЁё\s]+" type="text" />
                     </FormControl>
                   </Box>
                 </HStack>
@@ -183,7 +184,7 @@ export default function Signup() {
                 <Box display={"flex"} alignItems={"end"} gap={"4"}>
                   <FormControl isRequired>
                     <FormLabel>Снимка на акаунта</FormLabel>
-                    <input id="avatar" type="file" onChange={handleFileInputChange} />
+                    <input required id="avatar" type="file" onChange={handleFileInputChange} />
                   </FormControl>
 
                   <Avatar src={imageUrl}/>
@@ -206,20 +207,23 @@ export default function Signup() {
                 </FormControl>
                 <FormControl id="dateOfBirth" isRequired>
                   <FormLabel>Дата на раждане</FormLabel>
-                  <Input type="date" />
+                  <Input type="date"/>
                 </FormControl>
                 <HStack>
                   <Box>
                     <FormControl id="country" isRequired>
                       <FormLabel>Държава</FormLabel>
-                      <Input type="text" />
+                      <Input value='България' readOnly type="text" />
                     </FormControl>
                   </Box>
 
                   <Box>
                     <FormControl id="phoneNumber" isRequired>
                       <FormLabel>Телефонен номер</FormLabel>
-                      <Input type="number" />
+                      <InputGroup>
+                        <InputLeftAddon children='+359' />
+                        <Input type="tel" pattern="[1-9]+" minLength={9} maxLength={9} />
+                      </InputGroup>
                     </FormControl>
                   </Box>
                 </HStack>
@@ -247,7 +251,7 @@ export default function Signup() {
                   <Box>
                     <FormControl id="postCode" isRequired>
                       <FormLabel>Пощ. код</FormLabel>
-                      <Input type="text" />
+                      <Input type="number" minLength={4} maxLength={4} />
                     </FormControl>
                   </Box>
                 </HStack>
