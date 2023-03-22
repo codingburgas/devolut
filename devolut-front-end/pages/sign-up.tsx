@@ -140,9 +140,8 @@ export default function Signup() {
             <Heading fontSize={"4xl"} textAlign={"center"}>
               Регистрирайте се
             </Heading>
-            <Text fontSize={"lg"} color={"gray.400"}>
-              за да се насладите на всички{" "}
-              <Link color={"blue.400"}>възможност</Link> ✌️
+            <Text fontSize={"lg"} color={"gray.400"} display="flex" gap={"1"}>
+              за да се насладите на всички <Text color={"blue.400"}>възможности✌️</Text>
             </Text>
           </Stack>
           <Box
