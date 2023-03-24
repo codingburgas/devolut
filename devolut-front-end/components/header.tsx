@@ -48,7 +48,7 @@ const Header = ({ session, router, signOut }: {session: Session | null, router: 
           alignItems={'flex-start'}
           width={'fit-content'}
         >
-          Devolut<Badge marginLeft={"2"} fontWeight={"500"} fontSize={"sm"} colorScheme={"blue"}>v0.9</Badge>
+          Devolut<Badge marginLeft={"2"} fontWeight={"500"} fontSize={"sm"} colorScheme={"blue"}>v1.0</Badge>
         </Text>
       </Link>
 
