@@ -39,6 +39,7 @@ import Vault from "./vault";
 export default function Vaults({ session }: { session: Session | null }) {
   const [vaults, setVaults] = useState([]);
   const [currentVault, setCurrentVault] = useState([]);
+  const [vaultUsersDTags, setVaultUsersDTags] = useState([]);
   const [balance, setBalance] = useState(0.0);
   const [totalBalance, setTotalBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +50,8 @@ export default function Vaults({ session }: { session: Session | null }) {
     useState(false);
   const [giveUserVaultAccessModalOpen, setGiveUserVaultAccessModalOpen] =
     useState(false);
+  const [removeUserVaultAccessModalOpen, setRemoveUserVaultAccessModalOpen] =
+    useState(false);
   const [editVaultModalOpen, setEditVaultModalOpen] = useState(false);
   const [deleteVaultModalOpen, setDeleteVaultModalOpen] = useState(false);
   const [createVaultLoading, setCreateVaultLoading] = useState(false);
@@ -57,6 +60,8 @@ export default function Vaults({ session }: { session: Session | null }) {
   const [takeMoneyFromVaultLoading, setTakeMoneyFromVaultLoading] =
     useState(false);
   const [giveUserVaultAccessLoading, setGiveUserVaultAccessLoading] =
+    useState(false);
+  const [removeUserVaultAccessLoading, setRemoveUserVaultAccessLoading] =
     useState(false);
   const [editVaultLoading, setEditVaultLoading] = useState(false);
   const [deleteVaultLoading, setDeleteVaultLoading] = useState(false);
@@ -389,6 +394,69 @@ export default function Vaults({ session }: { session: Session | null }) {
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 
+  const handleVaultUserRemove = async (e:any) => {
+    e.preventDefault();
+    
+    setRemoveUserVaultAccessLoading(true);
+
+    setTimeout(async () => {
+      const res = await fetch(process.env.BACKEND_URL + "/vault/removeUserAccess", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vaultId: currentVault.id,
+          userDTag: e.target.user.value,
+          id: session?.user.id,
+          dTag: session?.user.dTag,
+          password: session?.user.password,
+        }),
+      });
+
+      if (res.ok && res.status == 200) {
+        toast({
+          title: `Успешно премахнахте достъпът на ${e.target.user.value} до ${currentVault.name}!`,
+          status: "success",
+          variant: "left-accent",
+          position: "bottom-right",
+          isClosable: true,
+        });
+
+        setRemoveUserVaultAccessModalOpen(false);
+        setRemoveUserVaultAccessLoading(false);
+        getVaults();
+      } else if (res.status == 404) {
+        setRemoveUserVaultAccessModalOpen(false);
+        setRemoveUserVaultAccessLoading(false);
+        toast({
+          title: "Нещо се обърка!",
+          status: "error",
+          variant: "left-accent",
+          position: "bottom-right",
+          isClosable: true,
+        });
+      }
+    }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
+  }
+
+  const removeUserVaultAccess = async (currentVault) => {
+    const res = await fetch(process.env.BACKEND_URL + "/vault/getUsers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        vaultId: currentVault.id,
+        id: session?.user.id,
+        dTag: session?.user.dTag,
+        password: session?.user.password,
+      }),
+    });
+
+    if (res.ok && res.status == 200) {
+      const users = await res.json();
+      setVaultUsersDTags(users);
+      setRemoveUserVaultAccessModalOpen(true);
+    }
+  }
+
   useEffect(() => {
     const interval = setInterval(async () => {
       getVaults();
@@ -505,6 +573,9 @@ export default function Vaults({ session }: { session: Session | null }) {
                           }
                           setGiveUserVaultAccessModalOpen={
                             setGiveUserVaultAccessModalOpen
+                          }
+                          removeUserVaultAccess={
+                            removeUserVaultAccess
                           }
                           setEditVaultModalOpen={setEditVaultModalOpen}
                           setDeleteVaultModalOpen={setDeleteVaultModalOpen}
@@ -886,6 +957,87 @@ export default function Vaults({ session }: { session: Session | null }) {
                           colorScheme="red"
                           width={"100%"}
                           isDisabled={giveUserVaultAccessLoading}
+                        >
+                          Откажи
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </form>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
+
+            <Modal
+              onClose={() => {
+                setRemoveUserVaultAccessModalOpen(false);
+                setCurrentVault([]);
+              }}
+              isOpen={removeUserVaultAccessModalOpen}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>
+                  Редактиране на достъп за {currentVault.name}
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <form onSubmit={handleVaultUserRemove}>
+                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
+                      <Flex wrap={"wrap"}>
+                        <Text
+                          marginBottom={"1"}
+                          fontSize={"md"}
+                          fontWeight={"semibold"}
+                        >
+                          Devolut Tag
+                        </Text>
+
+                        <Select
+                          width={"100%"}
+                          height={"12"}
+                          marginBottom={"2"}
+                          minWidth={"0"}
+                          fontSize={"lg"}
+                          fontWeight={"semibold"}
+                          variant="outline"
+                          colorScheme={"blue"}
+                          name="user"
+                          required
+                          disabled={removeUserVaultAccessLoading}
+                        >
+                          {vaultUsersDTags.map((user) => (
+                            <option
+                              value={user}
+                            >
+                              {user}
+                            </option>
+                          ))}
+                        </Select>
+                      </Flex>
+
+                      <Flex
+                        justify="space-between"
+                        wrap="nowrap"
+                        mb="3"
+                        mt="4"
+                        gap={"2"}
+                      >
+                        <Button
+                          colorScheme="red"
+                          type="submit"
+                          width={"100%"}
+                          isLoading={removeUserVaultAccessLoading}
+                        >
+                          Премахни
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setRemoveUserVaultAccessModalOpen(false);
+                          }}
+                          colorScheme="gray"
+                          width={"100%"}
+                          isDisabled={removeUserVaultAccessLoading}
                         >
                           Откажи
                         </Button>
