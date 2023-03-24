@@ -239,4 +239,63 @@ public class VaultServiceImpl implements VaultService {
 
         return ResponseEntity.ok(null);
     }
+
+    @Override
+    public ResponseEntity removeUserAccess(VaultAccessRemove vaultAccessRemove) {
+        if (vaultAccessRemove.getdTag() != null && vaultAccessRemove.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(vaultAccessRemove.getdTag(), vaultAccessRemove.getId(), vaultAccessRemove.getPassword()) == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Vault vault = vaultRepository.findById(vaultAccessRemove.getVaultId());
+
+        if (vault == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        User user = userRepository.findBydTag(vaultAccessRemove.getUserDTag());
+
+        if (user == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        vault.getUsersWithAccess().remove(Integer.valueOf(user.getId()));
+
+        vaultRepository.save(vault);
+
+        return ResponseEntity.ok(null);
+    }
+
+    @Override
+    public ResponseEntity<List<String>> getVaultUsers(VaultDelete vaultDelete) {
+        if (vaultDelete.getdTag() != null && vaultDelete.getPassword() != null) {
+            if (userRepository.findBydTagAndIdAndPassword(vaultDelete.getdTag(), vaultDelete.getId(), vaultDelete.getPassword()) == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Vault vault = vaultRepository.findById(vaultDelete.getVaultId());
+
+        if (vault == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        List<String> usersDTags = new ArrayList<>();
+
+        vault.getUsersWithAccess().forEach((user -> {
+            User currentUser = userRepository.findById(user.intValue());
+            if (currentUser != null) {
+                usersDTags.add(currentUser.getdTag());
+            }
+        }));
+
+        return ResponseEntity.ok(usersDTags);
+    }
+
+
 }

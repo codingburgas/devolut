@@ -19,4 +19,8 @@ public interface VaultService {
     public ResponseEntity deleteVault(VaultDelete vaultDelete);
 
     public ResponseEntity updateVault(VaultUpdate vaultUpdate);
+
+    public ResponseEntity removeUserAccess(VaultAccessRemove vaultAccessRemove);
+
+    public ResponseEntity<List<String>> getVaultUsers(VaultDelete vaultDelete);
 }
