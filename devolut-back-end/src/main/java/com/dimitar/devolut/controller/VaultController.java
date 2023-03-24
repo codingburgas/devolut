@@ -35,4 +35,9 @@ public class VaultController {
 
     @PostMapping("/update")
     public ResponseEntity updateVault(@RequestBody VaultUpdate vaultUpdate) { return vaultService.updateVault(vaultUpdate); }
+
+    @PostMapping("/removeUserAccess")
+    public ResponseEntity removeUserAccess(@RequestBody VaultAccessRemove vaultAccessRemove) { return vaultService.removeUserAccess(vaultAccessRemove); }
+    @PostMapping("/getUsers")
+    public ResponseEntity<List<String>> getVaultUsers(@RequestBody VaultDelete vaultDelete) { return vaultService.getVaultUsers(vaultDelete); }
 }
