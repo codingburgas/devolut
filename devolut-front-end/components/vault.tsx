@@ -1,4 +1,10 @@
-import { AddIcon, DeleteIcon, EditIcon, LinkIcon, MinusIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  DeleteIcon,
+  EditIcon,
+  LinkIcon,
+  MinusIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   ButtonGroup,
@@ -20,6 +26,7 @@ export default function Vault({
   setAddMoneyIntoVaultModalOpen,
   setTakeMoneyFromVaultModalOpen,
   setGiveUserVaultAccessModalOpen,
+  removeUserVaultAccess,
   setEditVaultModalOpen,
   setDeleteVaultModalOpen,
 }) {
@@ -48,7 +55,13 @@ export default function Vault({
             w="auto"
           >
             <Text display={"flex"} alignItems={"center"}>
-              {vault.ownerId != session.user.id ? (<Tooltip label={vault.ownerDTag} placement={"auto"} hasArrow><LinkIcon w={6} h={6} boxSize={4} marginRight={1}/></Tooltip>) : (<></>)}
+              {vault.ownerId != session.user.id ? (
+                <Tooltip label={vault.ownerDTag} placement={"auto"} hasArrow>
+                  <LinkIcon w={6} h={6} boxSize={4} marginRight={1} />
+                </Tooltip>
+              ) : (
+                <></>
+              )}
               {vault.name}{" "}
               {vault.goal ? (
                 <>
@@ -123,18 +136,34 @@ export default function Vault({
                   disabled={vault.balance == 0}
                 ></IconButton>
                 {vault.type == "shared" && vault.ownerId == session.user.id ? (
-                  <IconButton
-                    colorScheme={"green"}
-                    fontSize={"md"}
-                    minWidth={"8"}
-                    height={"8"}
-                    aria-label="Сподели сейф"
-                    icon={<LinkIcon />}
-                    onClick={() => {
-                      setCurrentVault(vault);
-                      setGiveUserVaultAccessModalOpen(true);
-                    }}
-                  ></IconButton>
+                  <>
+                    <IconButton
+                      colorScheme={"green"}
+                      fontSize={"md"}
+                      minWidth={"8"}
+                      height={"8"}
+                      aria-label="Сподели сейф"
+                      icon={<LinkIcon />}
+                      onClick={() => {
+                        setCurrentVault(vault);
+                        setGiveUserVaultAccessModalOpen(true);
+                      }}
+                    ></IconButton>
+
+                    <IconButton
+                      colorScheme={"red"}
+                      fontSize={"md"}
+                      minWidth={"8"}
+                      height={"8"}
+                      aria-label="Премахни достъп за сейф"
+                      icon={<LinkIcon />}
+                      onClick={() => {
+                        setCurrentVault(vault);
+                        removeUserVaultAccess(vault);
+                      }}
+                      disabled={vault.usersWithAccess.length <= 0}
+                    ></IconButton>
+                  </>
                 ) : (
                   <></>
                 )}
