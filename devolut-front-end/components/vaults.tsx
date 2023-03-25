@@ -518,6 +518,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                   rounded={"xl"}
                   h={"9"}
                   colorScheme={"blue"}
+                  disabled={currentItems.length <= 0}
                 >
                   Добави пари
                 </Button>
