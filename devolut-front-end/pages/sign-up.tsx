@@ -121,7 +121,11 @@ export default function Signup() {
   };
 
   function handleFileInputChange(event) {
-    setImageUrl(URL.createObjectURL(event.target.files[0]));
+    if (event.target.files[0] == undefined) {
+      setImageUrl("");
+    } else {
+      setImageUrl(URL.createObjectURL(event.target.files[0]));
+    }
   }
 
   return (
