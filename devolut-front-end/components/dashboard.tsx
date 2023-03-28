@@ -301,6 +301,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
                   rounded={"xl"}
                   h={"9"}
                   colorScheme={"blue"}
+                  isDisabled={balance <= 0}
                 >
                   Изпрати
                 </Button>
