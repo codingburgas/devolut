@@ -23,7 +23,7 @@ import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { IncomingMessage } from "http";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,20 +38,39 @@ export default function Signup() {
     setSignUpLoading(true);
 
     setTimeout(async () => {
+      const file = e.target.avatar.files[0];
+      const fileType = file["type"];
+      const validImageTypes = [
+        "image/gif",
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+      ];
+      if (!validImageTypes.includes(fileType)) {
+        setSignUpLoading(false);
+        return toast({
+          title: "Профилната снимка трябва все пак да бъде снимка :/",
+          status: "error",
+          variant: "left-accent",
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+
       const userImageUID = uuidv4();
 
       const formData = new FormData();
       const filename = userImageUID;
-      const fileExtension = e.target.avatar.files[0].name.split('.').pop();
+      const fileExtension = e.target.avatar.files[0].name.split(".").pop();
       const uniqueFilename = `${filename}.${fileExtension}`;
       const finalImage = new File([e.target.avatar.files[0]], uniqueFilename, {
         type: `image/${fileExtension}`,
-        lastModified: Date.now()
+        lastModified: Date.now(),
       });
-      formData.append('file', finalImage);
-    
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      formData.append("file", finalImage);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
         body: formData,
       });
 
@@ -68,8 +87,8 @@ export default function Signup() {
         postCode: e.target.postCode.value,
         city: e.target.city.value,
         region: e.target.region.value,
-        phoneNumber: '+359' + e.target.phoneNumber.value,
-        avatarSrc: uniqueFilename
+        phoneNumber: "+359" + e.target.phoneNumber.value,
+        avatarSrc: uniqueFilename,
       };
 
       const res = await fetch(process.env.BACKEND_URL + "/user/create", {
@@ -124,7 +143,17 @@ export default function Signup() {
     if (event.target.files[0] == undefined) {
       setImageUrl("");
     } else {
-      setImageUrl(URL.createObjectURL(event.target.files[0]));
+      const file = event.target.files[0];
+      const fileType = file["type"];
+      const validImageTypes = [
+        "image/gif",
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+      ];
+      if (validImageTypes.includes(fileType)) {
+        setImageUrl(URL.createObjectURL(event.target.files[0]));
+      }
     }
   }
 
@@ -192,10 +221,16 @@ export default function Signup() {
                 <Box display={"flex"} alignItems={"end"} gap={"4"}>
                   <FormControl isRequired>
                     <FormLabel>Снимка на акаунта</FormLabel>
-                    <input required id="avatar" type="file" onChange={handleFileInputChange} />
+                    <input
+                      required
+                      id="avatar"
+                      type="file"
+                      accept="image/png, image/gif, image/jpeg"
+                      onChange={handleFileInputChange}
+                    />
                   </FormControl>
 
-                  <Avatar src={imageUrl}/>
+                  <Avatar src={imageUrl} />
                 </Box>
                 <FormControl id="password" isRequired>
                   <FormLabel>Парола</FormLabel>
@@ -215,13 +250,13 @@ export default function Signup() {
                 </FormControl>
                 <FormControl id="dateOfBirth" isRequired>
                   <FormLabel>Дата на раждане</FormLabel>
-                  <Input type="date"/>
+                  <Input type="date" />
                 </FormControl>
                 <HStack>
                   <Box>
                     <FormControl id="country" isRequired>
                       <FormLabel>Държава</FormLabel>
-                      <Input value='България' readOnly type="text" />
+                      <Input value="България" readOnly type="text" />
                     </FormControl>
                   </Box>
 
@@ -229,8 +264,13 @@ export default function Signup() {
                     <FormControl id="phoneNumber" isRequired>
                       <FormLabel>Телефонен номер</FormLabel>
                       <InputGroup>
-                        <InputLeftAddon children='+359' />
-                        <Input type="tel" pattern="[1-9]+" minLength={9} maxLength={9} />
+                        <InputLeftAddon children="+359" />
+                        <Input
+                          type="tel"
+                          pattern="[1-9]+"
+                          minLength={9}
+                          maxLength={9}
+                        />
                       </InputGroup>
                     </FormControl>
                   </Box>
