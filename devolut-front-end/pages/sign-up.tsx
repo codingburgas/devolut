@@ -166,7 +166,10 @@ export default function Signup() {
         minH={"100vh"}
         align={"center"}
         justify={"center"}
-        bg={useColorModeValue("gray.50", "gray.800")}
+        backgroundImage={"background.jpg"}
+        backgroundRepeat={"no-repeat"}
+        backgroundAttachment={"fixed"}
+        backgroundPosition={"center"}
       >
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={2} px={6}>
           <Stack align={"center"}>
@@ -174,7 +177,7 @@ export default function Signup() {
               Регистрирайте се
             </Heading>
             <Flex direction={"row"} alignItems={"center"} gap={"1"}>
-              <Text fontSize={"lg"} color={"gray.400"}>
+              <Text fontSize={"lg"} color={"gray.500"}>
                 за да се насладите на всички
               </Text>
               <Text fontSize={"lg"} color={"blue.400"}>
@@ -183,9 +186,10 @@ export default function Signup() {
             </Flex>
           </Stack>
           <Box
-            rounded={"lg"}
-            bg={useColorModeValue("white", "gray.700")}
-            boxShadow={"lg"}
+            borderRadius={"lg"}
+            bgGradient="linear(to-t, whiteAlpha.400, whiteAlpha.50)"
+            boxShadow="rgba(255, 255, 255, 0.05) 0px 0px 0px 1px, rgba(255, 255, 255, 0.05) 0px 4px 6px"
+            backdropFilter="blur(60px)"
             p={8}
           >
             <form onSubmit={handleSignup}>
