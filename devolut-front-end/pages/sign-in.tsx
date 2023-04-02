@@ -10,7 +10,6 @@ import {
   Button,
   Heading,
   Text,
-  useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 import { IncomingMessage } from "http";
@@ -67,7 +66,10 @@ export default function Signin() {
         minH={"100vh"}
         align={"center"}
         justify={"center"}
-        bg={useColorModeValue("gray.50", "gray.800")}
+        backgroundImage={"background.jpg"}
+        backgroundRepeat={"no-repeat"}
+        backgroundAttachment={"fixed"}
+        backgroundPosition={"center"}
       >
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
           <Stack align={"center"}>
@@ -82,9 +84,10 @@ export default function Signin() {
             </Flex>
           </Stack>
           <Box
-            rounded={"lg"}
-            bg={useColorModeValue("white", "gray.700")}
-            boxShadow={"lg"}
+            borderRadius={"lg"}
+            bgGradient="linear(to-t, whiteAlpha.400, whiteAlpha.50)"
+            boxShadow="rgba(255, 255, 255, 0.05) 0px 0px 0px 1px, rgba(255, 255, 255, 0.05) 0px 4px 6px"
+            backdropFilter="blur(10px)"
             p={8}
           >
             <form onSubmit={handleSignin}>
@@ -98,14 +101,6 @@ export default function Signin() {
                   <Input type="password" />
                 </FormControl>
                 <Stack spacing={10}>
-                  {/* <Stack
-                    direction={{ base: "column", sm: "row" }}
-                    align={"start"}
-                    justify={"space-between"}
-                  >
-                    <Checkbox>Remember me</Checkbox>
-                    <Link color={"blue.400"}>Forgot password?</Link>
-                  </Stack> */}
                   <Button
                     isLoading={signInLoading}
                     loadingText="Вход"
