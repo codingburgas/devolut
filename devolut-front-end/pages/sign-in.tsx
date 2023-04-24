@@ -4,7 +4,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   Stack,
   Link,
   Button,
@@ -66,10 +65,7 @@ export default function Signin() {
         minH={"100vh"}
         align={"center"}
         justify={"center"}
-        backgroundImage={"background.jpg"}
-        backgroundRepeat={"no-repeat"}
-        backgroundAttachment={"fixed"}
-        backgroundPosition={"center"}
+        bg={"gray.800"}
       >
         <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
           <Stack align={"center"}>
@@ -84,10 +80,9 @@ export default function Signin() {
             </Flex>
           </Stack>
           <Box
-            borderRadius={"lg"}
-            bgGradient="linear(to-t, whiteAlpha.400, whiteAlpha.50)"
-            boxShadow="rgba(255, 255, 255, 0.05) 0px 0px 0px 1px, rgba(255, 255, 255, 0.05) 0px 4px 6px"
-            backdropFilter="blur(10px)"
+            rounded={"lg"}
+            bg={"gray.700"}
+            boxShadow={"lg"}
             p={8}
           >
             <form onSubmit={handleSignin}>
