@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -69,6 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         List<TransactionView> transactionViews = new ArrayList<>();
+        AtomicBoolean toBeDeleted = new AtomicBoolean(false);
 
         transactionRepository.findAllBySenderIdOrReceiverId(user.getId(), user.getId()).forEach((transaction -> {
             TransactionView transactionView = new TransactionView();
@@ -87,16 +89,24 @@ public class TransactionServiceImpl implements TransactionService {
                 case "vault" -> {
                     transactionView.setType("vault");
                     if (transaction.getAction().equals("withdraw")) {
-                        if (vaultRepository.findById(transaction.getSenderId()) == null) {
-                            transactionView.setSenderVaultName("[ИЗТРИТ]");
+                        if (transaction.getSenderId() != user.getId() || transaction.getSenderId() == transaction.getReceiverId()) {
+                            if (vaultRepository.findById(transaction.getSenderId()) == null) {
+                                transactionView.setSenderVaultName("[ИЗТРИТ]");
+                            } else {
+                                transactionView.setSenderVaultName(vaultRepository.findById(transaction.getSenderId()).getName());
+                            }
                         } else {
-                            transactionView.setSenderVaultName(vaultRepository.findById(transaction.getSenderId()).getName());
+                            toBeDeleted.set(true);
                         }
                     } else if (transaction.getAction().equals("deposit")) {
-                        if (vaultRepository.findById(transaction.getReceiverId()) == null) {
-                            transactionView.setReceiverVaultName("[ИЗТРИТ]");
+                        if (transaction.getReceiverId() != user.getId() || transaction.getSenderId() == transaction.getReceiverId()) {
+                            if (vaultRepository.findById(transaction.getReceiverId()) == null) {
+                                transactionView.setReceiverVaultName("[ИЗТРИТ]");
+                            } else {
+                                transactionView.setReceiverVaultName(vaultRepository.findById(transaction.getReceiverId()).getName());
+                            }
                         } else {
-                            transactionView.setReceiverVaultName(vaultRepository.findById(transaction.getReceiverId()).getName());
+                            toBeDeleted.set(true);
                         }
                     }
                 }
@@ -105,7 +115,13 @@ public class TransactionServiceImpl implements TransactionService {
             transactionView.setAmount(transaction.getAmount());
             transactionView.setCreated_at(transaction.getCreated_at());
 
-            transactionViews.add(transactionView);
+            if (toBeDeleted.get()) {
+                transactionView = null;
+            } else {
+                transactionViews.add(transactionView);
+            }
+
+            toBeDeleted.set(false);
         }));
 
         return ResponseEntity.ok(transactionViews);
