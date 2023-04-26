@@ -266,7 +266,7 @@ export default function Signup() {
                         <InputLeftAddon children="+359" />
                         <Input
                           type="tel"
-                          pattern="[1-9]+"
+                          pattern="[0-9]+"
                           minLength={9}
                           maxLength={9}
                         />
