@@ -489,7 +489,7 @@ export default function Dashboard({ session }: { session: Session }) {
                         <NumberInput
                           defaultValue={1}
                           min={0.01}
-                          max={1000}
+                          max={1000000}
                           precision={2}
                           size="md"
                           marginBottom={"2"}

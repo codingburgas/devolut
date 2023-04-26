@@ -145,7 +145,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         User receiver = userRepository.findById(transaction.getReceiverId());
 
-        if (transaction.getAmount() <= 0 || transaction.getAmount() > 1000 || receiver == null) {
+        if (transaction.getAmount() <= 0 || transaction.getAmount() > 1000000 || receiver == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
