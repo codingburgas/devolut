@@ -29,7 +29,7 @@ export default function Vault({
   removeUserVaultAccess,
   setEditVaultModalOpen,
   setDeleteVaultModalOpen,
-}) {
+}: any) {
   return (
     <>
       <Skeleton

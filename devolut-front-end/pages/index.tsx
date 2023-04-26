@@ -19,6 +19,9 @@ import Vaults from "../components/vaults";
 
 export default function Home() {
   const { data: session } = useSession();
+
+  if (!session) return <></>;
+
   const router = useRouter();
   const [tabIndex, setTabIndex] = useState(0);
 

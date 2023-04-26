@@ -106,7 +106,7 @@ export default function Signup() {
           callbackUrl: "/",
         });
 
-        if (status?.ok) router.push(status?.url);
+        if (status?.ok && status.url) router.push(status?.url);
       } else if (res.status == 226) {
         setSignUpLoading(false);
         toast({
@@ -138,7 +138,7 @@ export default function Signup() {
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 
-  function handleFileInputChange(event) {
+  function handleFileInputChange(event: any) {
     if (event.target.files[0] == undefined) {
       setImageUrl("");
     } else {

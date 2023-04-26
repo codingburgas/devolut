@@ -19,20 +19,22 @@ import Head from "next/head";
 import autosize from "autosize";
 import { useEffect, useRef, useState } from "react";
 
-function formatDate(string) {
-  var options = {
+function formatDate(string: Date) {
+  return new Date(string).toLocaleDateString("bg-BG", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  };
-  return new Date(string).toLocaleDateString("bg-BG", options);
+  });
 }
 
 export default function Account() {
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
+
+  if (!session) return <></>;
+
   const router = useRouter();
-  const ref = useRef();
+  const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -42,9 +44,9 @@ export default function Account() {
   }, []);
 
   useEffect(() => {
-    autosize(ref.current);
+    autosize(ref.current as Element);
     return () => {
-      autosize.destroy(ref.current);
+      autosize.destroy(ref.current as Element);
     };
   }, [isLoading]);
 
@@ -115,7 +117,7 @@ export default function Account() {
                       type="text"
                       backgroundColor={"gray.700"}
                       fontWeight={"semibold"}
-                      value={formatDate(session?.user.dateOfBirth)}
+                      value={formatDate(session.user.dateOfBirth)}
                       readOnly
                     />
                   </FormControl>

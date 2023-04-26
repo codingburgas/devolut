@@ -36,9 +36,18 @@ import Balance from "./number";
 import Pagination from "./pagination";
 import Vault from "./vault";
 
-export default function Vaults({ session }: { session: Session | null }) {
+interface Vault {
+  id: number
+  ownerId: number
+  balance: number
+  goal: number
+  name: string
+  type: string
+}
+
+export default function Vaults({ session }: { session: Session }) {
   const [vaults, setVaults] = useState([]);
-  const [currentVault, setCurrentVault] = useState([]);
+  const [currentVault, setCurrentVault] = useState<Vault>({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
   const [vaultUsersDTags, setVaultUsersDTags] = useState([]);
   const [balance, setBalance] = useState(0.0);
   const [totalBalance, setTotalBalance] = useState(0);
@@ -75,7 +84,7 @@ export default function Vaults({ session }: { session: Session | null }) {
   const endIndex = startIndex + itemsPerPage;
   const currentItems = vaults.slice(startIndex, endIndex);
 
-  function handlePageChange(pageNumber) {
+  function handlePageChange(pageNumber: number) {
     setCurrentPage(pageNumber);
   }
 
@@ -105,7 +114,7 @@ export default function Vaults({ session }: { session: Session | null }) {
 
     let totalBalance = 0;
 
-    vaults.forEach((vault) => {
+    vaults.forEach((vault: Vault) => {
       totalBalance += vault.balance;
     });
 
@@ -438,7 +447,7 @@ export default function Vaults({ session }: { session: Session | null }) {
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   }
 
-  const removeUserVaultAccess = async (currentVault) => {
+  const removeUserVaultAccess = async (currentVault: Vault) => {
     const res = await fetch(process.env.BACKEND_URL + "/vault/getUsers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -558,7 +567,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                 } else {
                   return (
                     <>
-                      {currentItems.map((item, index) => (
+                      {currentItems.map((item: Vault, index) => (
                         <Vault
                           key={item.id}
                           session={session}
@@ -720,7 +729,7 @@ export default function Vaults({ session }: { session: Session | null }) {
             <Modal
               onClose={() => {
                 setAddMoneyIntoVaultModalOpen(false);
-                setCurrentVault([]);
+                setCurrentVault({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
               }}
               isOpen={addMoneyIntoVaultModalOpen}
               isCentered
@@ -753,7 +762,7 @@ export default function Vaults({ session }: { session: Session | null }) {
                           required
                           disabled={addMoneyIntoVaultLoading}
                         >
-                          {vaults.map((vault) => (
+                          {vaults.map((vault: Vault) => (
                             <option
                               selected={currentVault.id == vault.id}
                               value={vault.id}
@@ -901,7 +910,7 @@ export default function Vaults({ session }: { session: Session | null }) {
             <Modal
               onClose={() => {
                 setGiveUserVaultAccessModalOpen(false);
-                setCurrentVault([]);
+                setCurrentVault({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
               }}
               isOpen={giveUserVaultAccessModalOpen}
               isCentered
@@ -971,7 +980,7 @@ export default function Vaults({ session }: { session: Session | null }) {
             <Modal
               onClose={() => {
                 setRemoveUserVaultAccessModalOpen(false);
-                setCurrentVault([]);
+                setCurrentVault({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
               }}
               isOpen={removeUserVaultAccessModalOpen}
               isCentered

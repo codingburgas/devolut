@@ -42,7 +42,8 @@ export default function Signin() {
 
       if (status?.ok) {
         toast.closeAll();
-        router.push(status.url);
+        if (status.url)
+          router.push(status.url);
       } else {
         setSignInLoading(false);
         toast({

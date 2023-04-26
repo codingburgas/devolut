@@ -1,6 +1,6 @@
 import { Box, Button, ButtonGroup, HStack, Text } from "@chakra-ui/react";
 
-function Pagination({ currentPage, totalPages, onPageChange }) {
+function Pagination({ currentPage, totalPages, onPageChange }: any) {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const visiblePageNumbers =

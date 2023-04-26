@@ -2,15 +2,14 @@ import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 
-function formatDate(string) {
-  var options = {
+function formatDate(string: Date) {
+  return new Date(string).toLocaleDateString("bg-BG", {
     year: "numeric",
     month: "long",
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
-  };
-  return new Date(string).toLocaleDateString("bg-BG", options);
+  });
 }
 
 export default function Transaction({

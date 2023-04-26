@@ -34,7 +34,7 @@ import Balance from "./number";
 import Pagination from "./pagination";
 import Transaction from "./transaction";
 
-export default function Dashboard({ session }: { session: Session | null }) {
+export default function Dashboard({ session }: { session: Session }) {
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0.0);
   const [transactions, setTransactions] = useState([]);
@@ -81,7 +81,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
     setBalance(balance);
   }
 
-  function handlePageChange(pageNumber) {
+  function handlePageChange(pageNumber: number) {
     setCurrentPage(pageNumber);
   }
 
@@ -112,7 +112,7 @@ export default function Dashboard({ session }: { session: Session | null }) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleAloDa = (e) => {
+  const handleAloDa = (e: React.ChangeEvent<HTMLInputElement>) => {
     let input = e.target.value;
     input = input.replace(/\D/g, "");
     input = input.substring(0, 4);
@@ -393,8 +393,9 @@ export default function Dashboard({ session }: { session: Session | null }) {
                             let input = e.target.value;
                             input = input.replace(/\D/g, "");
                             input = input.substring(0, 16);
-                            if (input.match(/.{1,4}/g) != null)
-                              input = input.match(/.{1,4}/g).join(" ");
+                            let numbersGroup = input.match(/.{1,4}/g);
+                            if (numbersGroup != null)
+                              input = numbersGroup.join(" ");
 
                             setCardNumber(input);
                           }}
