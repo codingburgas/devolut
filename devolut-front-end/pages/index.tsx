@@ -7,7 +7,7 @@ import {
   Tab,
   TabPanel,
   ScaleFade,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import { useRouter } from "next/router";
@@ -40,58 +40,62 @@ export default function Home() {
       </Head>
 
       <ScaleFade initialScale={0.9} in={true}>
-      <Box
-        width={'full'}
-        maxWidth={{ base: 'xl', md: '7xl' }}
-        marginInline={'auto'}
-        paddingInlineStart={{ base: '2', md: '8' }}
-        paddingInlineEnd={{ base: '2', md: '8' }}
-      >
-        <Header session={session} router={router} signOut={signOut} />
+        <Box
+          width={"full"}
+          maxWidth={{ base: "xl", md: "7xl" }}
+          marginInline={"auto"}
+          paddingInlineStart={{ base: "2", md: "8" }}
+          paddingInlineEnd={{ base: "2", md: "8" }}
+        >
+          <Header session={session} router={router} signOut={signOut} />
 
-        <Tabs onChange={(index) => setTabIndex(index)} isFitted colorScheme={'blue'}>
-          <TabList>
-            <Tab fontWeight={'semibold'}>Табло</Tab>
-            <Tab isDisabled fontWeight={'semibold'}>Карти</Tab>
-            <Tab isDisabled fontWeight={'semibold'}>Криптовалути</Tab>
-            <Tab fontWeight={'semibold'}>Сейфове</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              {tabIndex == 0 ? (<Dashboard session={session}/>) : (<></>)}
-            </TabPanel>
-            <TabPanel>
-              {tabIndex == 1 ? (<></>) : (<></>)}
-            </TabPanel>
-            <TabPanel>
-              {tabIndex == 2 ? (<></>) : (<></>)}
-            </TabPanel>
-            <TabPanel>
-              {tabIndex == 3 ? (<Vaults session={session} />) : (<></>)}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+          <Tabs
+            onChange={(index) => setTabIndex(index)}
+            isFitted
+            colorScheme={"blue"}
+          >
+            <TabList>
+              <Tab fontWeight={"semibold"}>Табло</Tab>
+              <Tab isDisabled fontWeight={"semibold"}>
+                Карти
+              </Tab>
+              <Tab isDisabled fontWeight={"semibold"}>
+                Криптовалути
+              </Tab>
+              <Tab fontWeight={"semibold"}>Сейфове</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                {tabIndex == 0 ? <Dashboard session={session} /> : <></>}
+              </TabPanel>
+              <TabPanel>{tabIndex == 1 ? <></> : <></>}</TabPanel>
+              <TabPanel>{tabIndex == 2 ? <></> : <></>}</TabPanel>
+              <TabPanel>
+                {tabIndex == 3 ? <Vaults session={session} /> : <></>}
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
 
-        <Footer />
-      </Box>
-    </ScaleFade>
+          <Footer />
+        </Box>
+      </ScaleFade>
     </>
   );
 }
 
-export async function getServerSideProps({ req }: {req: IncomingMessage}){
-  const session = await getSession({ req })
+export async function getServerSideProps({ req }: { req: IncomingMessage }) {
+  const session = await getSession({ req });
 
-  if(!session){
+  if (!session) {
     return {
-      redirect : {
-        destination: '/sign-in',
-        permanent: false
-      }
-    }
+      redirect: {
+        destination: "/sign-in",
+        permanent: false,
+      },
+    };
   }
 
   return {
-    props: { session }
-  }
+    props: { session },
+  };
 }
