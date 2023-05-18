@@ -26,6 +26,11 @@ import {
   Stat,
   StatHelpText,
   StatNumber,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -37,17 +42,26 @@ import Pagination from "./pagination";
 import Vault from "./vault";
 
 interface Vault {
-  id: number
-  ownerId: number
-  balance: number
-  goal: number
-  name: string
-  type: string
+  id: number;
+  ownerId: number;
+  balance: number;
+  goal: number;
+  name: string;
+  type: string;
+  usersWithAccess: any;
 }
 
 export default function Vaults({ session }: { session: Session }) {
   const [vaults, setVaults] = useState([]);
-  const [currentVault, setCurrentVault] = useState<Vault>({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
+  const [currentVault, setCurrentVault] = useState<Vault>({
+    id: 0,
+    ownerId: 0,
+    balance: 0,
+    goal: 0,
+    name: "",
+    type: "",
+    usersWithAccess: [],
+  });
   const [vaultUsersDTags, setVaultUsersDTags] = useState([]);
   const [balance, setBalance] = useState(0.0);
   const [totalBalance, setTotalBalance] = useState(0);
@@ -58,8 +72,6 @@ export default function Vaults({ session }: { session: Session }) {
   const [takeMoneyFromVaultModalOpen, setTakeMoneyFromVaultModalOpen] =
     useState(false);
   const [giveUserVaultAccessModalOpen, setGiveUserVaultAccessModalOpen] =
-    useState(false);
-  const [removeUserVaultAccessModalOpen, setRemoveUserVaultAccessModalOpen] =
     useState(false);
   const [editVaultModalOpen, setEditVaultModalOpen] = useState(false);
   const [deleteVaultModalOpen, setDeleteVaultModalOpen] = useState(false);
@@ -83,6 +95,7 @@ export default function Vaults({ session }: { session: Session }) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = vaults.slice(startIndex, endIndex);
+  const [tabIndex, setTabIndex] = useState(0);
 
   function handlePageChange(pageNumber: number) {
     setCurrentPage(pageNumber);
@@ -403,23 +416,26 @@ export default function Vaults({ session }: { session: Session }) {
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
   };
 
-  const handleVaultUserRemove = async (e:any) => {
+  const handleVaultUserRemove = async (e: any) => {
     e.preventDefault();
-    
+
     setRemoveUserVaultAccessLoading(true);
 
     setTimeout(async () => {
-      const res = await fetch(process.env.BACKEND_URL + "/vault/removeUserAccess", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vaultId: currentVault.id,
-          userDTag: e.target.user.value,
-          id: session?.user.id,
-          dTag: session?.user.dTag,
-          password: session?.user.password,
-        }),
-      });
+      const res = await fetch(
+        process.env.BACKEND_URL + "/vault/removeUserAccess",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            vaultId: currentVault.id,
+            userDTag: e.target.user.value,
+            id: session?.user.id,
+            dTag: session?.user.dTag,
+            password: session?.user.password,
+          }),
+        }
+      );
 
       if (res.ok && res.status == 200) {
         toast({
@@ -430,12 +446,14 @@ export default function Vaults({ session }: { session: Session }) {
           isClosable: true,
         });
 
-        setRemoveUserVaultAccessModalOpen(false);
+        setGiveUserVaultAccessModalOpen(false);
         setRemoveUserVaultAccessLoading(false);
+        setTabIndex(0);
         getVaults();
       } else if (res.status == 404) {
-        setRemoveUserVaultAccessModalOpen(false);
+        setGiveUserVaultAccessModalOpen(false);
         setRemoveUserVaultAccessLoading(false);
+        setTabIndex(0);
         toast({
           title: "Нещо се обърка!",
           status: "error",
@@ -445,7 +463,7 @@ export default function Vaults({ session }: { session: Session }) {
         });
       }
     }, Math.floor(Math.random() * (Math.floor(700) - Math.ceil(500)) + Math.ceil(500)));
-  }
+  };
 
   const removeUserVaultAccess = async (currentVault: Vault) => {
     const res = await fetch(process.env.BACKEND_URL + "/vault/getUsers", {
@@ -462,9 +480,8 @@ export default function Vaults({ session }: { session: Session }) {
     if (res.ok && res.status == 200) {
       const users = await res.json();
       setVaultUsersDTags(users);
-      setRemoveUserVaultAccessModalOpen(true);
     }
-  }
+  };
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -584,9 +601,7 @@ export default function Vaults({ session }: { session: Session }) {
                           setGiveUserVaultAccessModalOpen={
                             setGiveUserVaultAccessModalOpen
                           }
-                          removeUserVaultAccess={
-                            removeUserVaultAccess
-                          }
+                          removeUserVaultAccess={removeUserVaultAccess}
                           setEditVaultModalOpen={setEditVaultModalOpen}
                           setDeleteVaultModalOpen={setDeleteVaultModalOpen}
                         />
@@ -729,7 +744,15 @@ export default function Vaults({ session }: { session: Session }) {
             <Modal
               onClose={() => {
                 setAddMoneyIntoVaultModalOpen(false);
-                setCurrentVault({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
+                setCurrentVault({
+                  id: 0,
+                  ownerId: 0,
+                  balance: 0,
+                  goal: 0,
+                  name: "",
+                  type: "",
+                  usersWithAccess: [],
+                });
               }}
               isOpen={addMoneyIntoVaultModalOpen}
               isCentered
@@ -910,150 +933,170 @@ export default function Vaults({ session }: { session: Session }) {
             <Modal
               onClose={() => {
                 setGiveUserVaultAccessModalOpen(false);
-                setCurrentVault({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
+                setCurrentVault({
+                  id: 0,
+                  ownerId: 0,
+                  balance: 0,
+                  goal: 0,
+                  name: "",
+                  type: "",
+                  usersWithAccess: [],
+                });
+                setTabIndex(0);
               }}
               isOpen={giveUserVaultAccessModalOpen}
               isCentered
             >
               <ModalOverlay />
               <ModalContent>
-                <ModalHeader>Споделяне на {currentVault.name}</ModalHeader>
-                <ModalCloseButton />
                 <ModalBody>
-                  <form onSubmit={handleVaultShare}>
-                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
-                      <Flex wrap={"wrap"}>
-                        <Text
-                          marginBottom={"1"}
-                          fontSize={"md"}
-                          fontWeight={"semibold"}
-                        >
-                          Devolut Tag
-                        </Text>
-                        <Input
-                          width={"100%"}
-                          height={"12"}
-                          marginBottom={"2"}
-                          minWidth={"0"}
-                          fontSize={"lg"}
-                          fontWeight={"semibold"}
-                          variant="outline"
-                          colorScheme={"blue"}
-                          name="dTag"
-                          required
-                          disabled={giveUserVaultAccessLoading}
-                        ></Input>
-                      </Flex>
+                  <Tabs
+                    onChange={(index) => setTabIndex(index)}
+                    isFitted
+                    colorScheme={"blue"}
+                  >
+                    <TabList>
+                      <Tab isDisabled={removeUserVaultAccessLoading || giveUserVaultAccessLoading} fontWeight={"semibold"}>Сподели</Tab>
+                      <Tab isDisabled={currentVault.usersWithAccess.length <= 0 || removeUserVaultAccessLoading || giveUserVaultAccessLoading} fontWeight={"semibold"}>Премахни</Tab>
+                    </TabList>
+                    <TabPanels>
+                      <TabPanel>
+                        {tabIndex == 0 ? (
+                          <>
+                            <form onSubmit={handleVaultShare}>
+                              <Flex
+                                wrap={"wrap"}
+                                direction={"column"}
+                                gap={"2"}
+                              >
+                                <Flex wrap={"wrap"}>
+                                  <Text
+                                    marginBottom={"1"}
+                                    fontSize={"md"}
+                                    fontWeight={"semibold"}
+                                  >
+                                    Devolut Tag
+                                  </Text>
+                                  <Input
+                                    width={"100%"}
+                                    height={"12"}
+                                    marginBottom={"2"}
+                                    minWidth={"0"}
+                                    fontSize={"lg"}
+                                    fontWeight={"semibold"}
+                                    variant="outline"
+                                    colorScheme={"blue"}
+                                    name="dTag"
+                                    required
+                                    disabled={giveUserVaultAccessLoading}
+                                  ></Input>
+                                </Flex>
 
-                      <Flex
-                        justify="space-between"
-                        wrap="nowrap"
-                        mb="3"
-                        mt="4"
-                        gap={"2"}
-                      >
-                        <Button
-                          colorScheme="green"
-                          type="submit"
-                          width={"100%"}
-                          isLoading={giveUserVaultAccessLoading}
-                        >
-                          Сподели
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setGiveUserVaultAccessModalOpen(false);
-                          }}
-                          colorScheme="red"
-                          width={"100%"}
-                          isDisabled={giveUserVaultAccessLoading}
-                        >
-                          Откажи
-                        </Button>
-                      </Flex>
-                    </Flex>
-                  </form>
-                </ModalBody>
-              </ModalContent>
-            </Modal>
+                                <Flex
+                                  justify="space-between"
+                                  wrap="nowrap"
+                                  mb="3"
+                                  mt="4"
+                                  gap={"2"}
+                                >
+                                  <Button
+                                    colorScheme="green"
+                                    type="submit"
+                                    width={"100%"}
+                                    isLoading={giveUserVaultAccessLoading}
+                                  >
+                                    Сподели
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      setGiveUserVaultAccessModalOpen(false);
+                                    }}
+                                    width={"100%"}
+                                    isDisabled={giveUserVaultAccessLoading}
+                                  >
+                                    Откажи
+                                  </Button>
+                                </Flex>
+                              </Flex>
+                            </form>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </TabPanel>
+                      <TabPanel>
+                        {tabIndex == 1 ? (
+                          <>
+                            <form onSubmit={handleVaultUserRemove}>
+                              <Flex
+                                wrap={"wrap"}
+                                direction={"column"}
+                                gap={"2"}
+                              >
+                                <Flex wrap={"wrap"}>
+                                  <Text
+                                    marginBottom={"1"}
+                                    fontSize={"md"}
+                                    fontWeight={"semibold"}
+                                  >
+                                    Devolut Tag
+                                  </Text>
 
-            <Modal
-              onClose={() => {
-                setRemoveUserVaultAccessModalOpen(false);
-                setCurrentVault({id: 0, ownerId: 0, balance: 0, goal: 0, name: "", type: ""});
-              }}
-              isOpen={removeUserVaultAccessModalOpen}
-              isCentered
-            >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>
-                  Редактиране на достъп за {currentVault.name}
-                </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <form onSubmit={handleVaultUserRemove}>
-                    <Flex wrap={"wrap"} direction={"column"} gap={"2"}>
-                      <Flex wrap={"wrap"}>
-                        <Text
-                          marginBottom={"1"}
-                          fontSize={"md"}
-                          fontWeight={"semibold"}
-                        >
-                          Devolut Tag
-                        </Text>
+                                  <Select
+                                    width={"100%"}
+                                    height={"12"}
+                                    marginBottom={"2"}
+                                    minWidth={"0"}
+                                    fontSize={"lg"}
+                                    fontWeight={"semibold"}
+                                    variant="outline"
+                                    colorScheme={"blue"}
+                                    name="user"
+                                    required
+                                    disabled={removeUserVaultAccessLoading}
+                                  >
+                                    {vaultUsersDTags.map((user) => (
+                                      <option value={user}>{user}</option>
+                                    ))}
+                                  </Select>
+                                </Flex>
 
-                        <Select
-                          width={"100%"}
-                          height={"12"}
-                          marginBottom={"2"}
-                          minWidth={"0"}
-                          fontSize={"lg"}
-                          fontWeight={"semibold"}
-                          variant="outline"
-                          colorScheme={"blue"}
-                          name="user"
-                          required
-                          disabled={removeUserVaultAccessLoading}
-                        >
-                          {vaultUsersDTags.map((user) => (
-                            <option
-                              value={user}
-                            >
-                              {user}
-                            </option>
-                          ))}
-                        </Select>
-                      </Flex>
-
-                      <Flex
-                        justify="space-between"
-                        wrap="nowrap"
-                        mb="3"
-                        mt="4"
-                        gap={"2"}
-                      >
-                        <Button
-                          colorScheme="red"
-                          type="submit"
-                          width={"100%"}
-                          isLoading={removeUserVaultAccessLoading}
-                        >
-                          Премахни
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setRemoveUserVaultAccessModalOpen(false);
-                          }}
-                          colorScheme="gray"
-                          width={"100%"}
-                          isDisabled={removeUserVaultAccessLoading}
-                        >
-                          Откажи
-                        </Button>
-                      </Flex>
-                    </Flex>
-                  </form>
+                                <Flex
+                                  justify="space-between"
+                                  wrap="nowrap"
+                                  mb="3"
+                                  mt="4"
+                                  gap={"2"}
+                                >
+                                  <Button
+                                    colorScheme="red"
+                                    type="submit"
+                                    width={"100%"}
+                                    isLoading={removeUserVaultAccessLoading}
+                                  >
+                                    Премахни
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      setGiveUserVaultAccessModalOpen(false);
+                                      setTabIndex(0);
+                                    }}
+                                    colorScheme="gray"
+                                    width={"100%"}
+                                    isDisabled={removeUserVaultAccessLoading}
+                                  >
+                                    Откажи
+                                  </Button>
+                                </Flex>
+                              </Flex>
+                            </form>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </TabPanel>
+                    </TabPanels>
+                  </Tabs>
                 </ModalBody>
               </ModalContent>
             </Modal>

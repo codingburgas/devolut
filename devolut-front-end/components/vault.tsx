@@ -147,21 +147,8 @@ export default function Vault({
                       onClick={() => {
                         setCurrentVault(vault);
                         setGiveUserVaultAccessModalOpen(true);
-                      }}
-                    ></IconButton>
-
-                    <IconButton
-                      colorScheme={"red"}
-                      fontSize={"md"}
-                      minWidth={"8"}
-                      height={"8"}
-                      aria-label="Премахни достъп за сейф"
-                      icon={<LinkIcon />}
-                      onClick={() => {
-                        setCurrentVault(vault);
                         removeUserVaultAccess(vault);
                       }}
-                      disabled={vault.usersWithAccess.length <= 0}
                     ></IconButton>
                   </>
                 ) : (
